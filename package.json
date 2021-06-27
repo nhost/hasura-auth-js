@@ -1,7 +1,7 @@
 {
-  "name": "nhost-js",
+  "name": "nhost-auth-js",
   "version": "0.0.1",
-  "description": "Nhost JS SDK",
+  "description": "Hasura Auth JavaScript SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nhost/nhost-js.git"
+    "url": "git+https://github.com/nhost/hasura-auth-js.git"
   },
   "bugs": {
-    "url": "https://github.com/nhost/nhost-js/issues"
+    "url": "https://github.com/nhost/hasura-auth-js/issues"
   },
   "author": "Nhost",
   "license": "MIT",
