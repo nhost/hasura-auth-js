@@ -1,8 +1,8 @@
-import NhostAuth from "./Auth";
+import Auth from "./Auth";
 import UserSession from "./UserSession";
 import * as types from "./types";
 
-export default class NhostClient {
+export default class AuthClient {
   protected baseURL: string;
   protected useCookies: boolean;
   private refreshIntervalTime: number | null;
@@ -12,7 +12,7 @@ export default class NhostClient {
   private autoLogin: boolean;
   private session: UserSession;
 
-  auth: NhostAuth;
+  auth: Auth;
 
   constructor(config: types.UserConfig) {
     if (!config.baseURL)
@@ -34,7 +34,7 @@ export default class NhostClient {
       ? config.clientStorageType
       : "web";
 
-    this.auth = new NhostAuth(
+    this.auth = new Auth(
       {
         baseURL: this.baseURL,
         useCookies: this.useCookies,

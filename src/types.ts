@@ -17,12 +17,6 @@ export interface AuthConfig {
   ssr?: boolean;
   autoLogin: boolean;
 }
-
-export interface StorageConfig {
-  baseURL: string;
-  useCookies: boolean;
-}
-
 export interface ClientStorage {
   // custom
   // localStorage

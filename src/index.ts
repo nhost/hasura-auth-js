@@ -1,8 +1,8 @@
-import NhostClient from "./NhostClient";
+import AuthClient from "./AuthClient";
 import { UserConfig, User, Session } from "./types";
 
-const createClient = (config: UserConfig) => {
-  return new NhostClient(config);
+const createAuthClient = (config: UserConfig) => {
+  return new AuthClient(config);
 };
 
-export { NhostClient, createClient, User, Session, UserConfig };
+export { AuthClient, createAuthClient, User, Session, UserConfig };
