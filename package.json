@@ -1,6 +1,6 @@
 {
-  "name": "nhost-js-sdk",
-  "version": "3.1.0",
+  "name": "nhost-js",
+  "version": "0.0.1",
   "description": "Nhost JS SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nhost/nhost-js-sdk.git"
+    "url": "git+https://github.com/nhost/nhost-js.git"
   },
   "bugs": {
-    "url": "https://github.com/nhost/nhost-js-sdk/issues"
+    "url": "https://github.com/nhost/nhost-js/issues"
   },
   "author": "Nhost",
   "license": "MIT",
