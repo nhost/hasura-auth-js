@@ -1,27 +1,20 @@
 {
-  "name": "nhost-js-sdk",
+  "name": "@nhost/hasura-auth-js",
   "version": "3.1.0",
-  "description": "Nhost JS SDK",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "Hasura Auth Js",
+  "license": "MIT",
+  "repository": "nhost/hasura-auth-js",
+  "main": "./dist/index.js",
+  "bugs": "https://github.com/nhost/hasura-auth-js/issues",
+  "homepage": "https://nhost.io",
+  "types": "./dist/index.d.ts",
   "files": [
     "/dist"
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest --runInBand --coverage",
-    "version": "tsc"
+    "test": "jest --runInBand --coverage"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nhost/nhost-js-sdk.git"
-  },
-  "bugs": {
-    "url": "https://github.com/nhost/nhost-js-sdk/issues"
-  },
-  "author": "Nhost",
-  "license": "MIT",
   "dependencies": {
     "@types/jwt-decode": "^2.2.1",
     "axios": "^0.21.1",

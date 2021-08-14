@@ -1,0 +1,49 @@
+version: "3.6"
+services:
+  postgres:
+    image: postgres:12
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: pgpass
+  graphql-engine:
+    image: hasura/graphql-engine:v2.0.1
+    depends_on:
+      - "postgres"
+    restart: always
+    ports:
+      - "8080:8080"
+    environment: 
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'false'
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:pgpass@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: hello123
+      HASURA_GRAPHQL_JWT_SECRET: >-
+        {"type":"HS256", "key":
+        "5152fa850c02dc222631cca898ed1485821a70912a6e3649c49076912daa3b62182ba013315915d64f40cddfbb8b58eb5bd11ba225336a6af45bbae07ca873f3"}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public
+      HASURA_GRAPHQL_LOG_LEVEL: debug
+  hasura-auth:
+    image: nhost/hasura-auth:latest
+    ports:
+      - "3000:3000"
+    environment:
+      APP_NAME: 'Hasura Auth Test'
+      PORT: 3000
+      HOST: "0.0.0.0"
+      SERVER_URL: http://localhost:4000
+      DATABASE_URL: postgres://postgres:pgpass@postgres:5432/postgres
+      HASURA_ENDPOINT: http://graphql-engine:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: hello123
+      JWT_ALGORITHM: HS256
+      JWT_KEY: 5152fa850c02dc222631cca898ed1485821a70912a6e3649c49076912daa3b62182ba013315915d64f40cddfbb8b58eb5bd11ba225336a6af45bbae07ca873f3
+      STORAGE_ENABLED: 'false'
+      REDIRECT_URL_ERROR: http://localhost:3000
+      REDIRECT_URL_SUCCESS: http://localhost:3000
+      NODE_ENV: "TEST"
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui

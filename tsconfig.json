@@ -1,27 +1,17 @@
 {
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/**/*.test.ts",
-    "src/test"
-  ],
+  "include": ["src", "test/Auth.test.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "test"],
   "compilerOptions": {
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "esModuleInterop": true,
     "declaration": true,
     "strict": true,
     "target": "es5",
-    "outDir": "dist",
     "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": "src",
     "moduleResolution": "node",
     "sourceMap": true,
-    "rootDir": "src",
     "noUnusedLocals": true
   }
 }
