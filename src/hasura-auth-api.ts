@@ -6,7 +6,6 @@ import {
   ApiSignInWithPasswordless,
   ApiSignOutResponse,
   ApiSignUpWithEmailAndPasswordReponse,
-  SignInWithPasswordless,
   SignUpWithEmailAndPasswordOptions,
 } from './utils/types';
 
