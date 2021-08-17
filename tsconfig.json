@@ -11,7 +11,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "moduleResolution": "node",
-    "sourceMap": true,
+    "sourceMap": false,
     "noUnusedLocals": true
   }
 }
