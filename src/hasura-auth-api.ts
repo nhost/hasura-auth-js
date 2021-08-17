@@ -2,8 +2,11 @@ import axios, { AxiosInstance } from 'axios';
 import {
   apiRefreshTokenResponse,
   ApiSignInResponse,
+  ApiSignInWithOtpParams,
+  ApiSignInWithPasswordless,
   ApiSignOutResponse,
   ApiSignUpWithEmailAndPasswordReponse,
+  SignInWithPasswordless,
   SignUpWithEmailAndPasswordOptions,
 } from './utils/types';
 
@@ -28,7 +31,6 @@ export class HasuraAuthApi {
   ): Promise<ApiSignUpWithEmailAndPasswordReponse> {
     try {
       const res = await this.httpClient.post('/signup/email-password', options);
-
       return { session: res.data.session, error: null };
     } catch (error) {
       return { session: null, error };
@@ -41,19 +43,31 @@ export class HasuraAuthApi {
   }): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post('/signin/email-password', params);
-
       return { data: res.data, error: null };
     } catch (error) {
       return { data: null, error };
     }
   }
 
-  async signInWithMagicLink(params: {
-    email: string;
-  }): Promise<ApiSignInResponse> {
+  async signInWithPasswordless(
+    params: ApiSignInWithPasswordless
+  ): Promise<ApiSignInResponse> {
     try {
-      const res = await this.httpClient.post('/signin/magic-link', params);
+      const res = await this.httpClient.post(
+        '/signin/passwordless/start',
+        params
+      );
+      return { data: res.data, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  }
 
+  async signInWithOtp(
+    params: ApiSignInWithOtpParams
+  ): Promise<ApiSignInResponse> {
+    try {
+      const res = await this.httpClient.post('/signin/otp', params);
       return { data: res.data, error: null };
     } catch (error) {
       return { data: null, error };

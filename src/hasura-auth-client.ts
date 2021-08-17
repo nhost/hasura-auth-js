@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 import { HasuraAuthApi } from './hasura-auth-api';
+import { NHOST_REFRESH_TOKEN } from './utils/constants';
 import { inMemoryLocalStorage, isBrowser } from './utils/helpers';
 import {
   AuthChangedFunction,
@@ -25,8 +26,8 @@ export class HasuraAuthClient {
   private clientStorage: ClientStorage;
   private clientStorageType: string;
 
-  private refreshTokenLock: boolean;
   private url: string;
+  private autoRefreshToken: boolean;
 
   private session: Session | null;
 
@@ -76,8 +77,9 @@ export class HasuraAuthClient {
     this.refreshIntervalSleepCheckLastSample = Date.now();
     this.sampleRate = 2000; // check every 2 seconds
 
-    this.refreshTokenLock = false;
     this.url = url;
+
+    this.autoRefreshToken = autoRefreshToken;
 
     this.initAuthLoading = true;
 
@@ -89,44 +91,34 @@ export class HasuraAuthClient {
     // get refresh token from query param (from external OAuth provider callback)
     let refreshToken: string | null = null;
 
+    let autoLoginFromQueryParameters = false;
+
+    // try to auto login using hashtag query parameters
+    // ex if the user came from a magic link
     if (autoLogin && isBrowser()) {
       // try {
       const urlParams = queryString.parse(
         window.location.toString().split('#')[1]
       );
 
-      if ('action' in urlParams) {
-        if (urlParams.action === 'verifyEmail') {
-        }
+      if ('otp' in urlParams && 'email' in urlParams) {
+        const { otp, email } = urlParams;
+        // sign in with OTP
+        this.signIn({
+          otp: otp as string,
+          email: email as string,
+        });
+        autoLoginFromQueryParameters = true;
       }
-
-      if ('refreshToken' in urlParams) {
-        refreshToken = urlParams.refreshToken as string;
-      }
-
-      //   refreshToken =
-      //     "refresh_token" in parsed ? (parsed.refresh_token as string) : null;
-      //   if (refreshToken) {
-      //     let newURL = this._removeParam("refresh_token", window.location.href);
-      //     try {
-      //       window.history.pushState({}, document.title, newURL);
-      //     } catch {
-      //       // noop
-      //       // window object not available
-      //     }
-      //   }
-      // } catch (e) {
-      //   // noop. `window` not available probably.
-      // }
     }
 
     // if empty string, then set it to null
     // refreshToken = refreshToken ? refreshToken : null;
 
-    if (autoLogin) {
+    if (!autoLoginFromQueryParameters && autoLogin) {
       this._autoLogin(refreshToken);
     } else if (refreshToken) {
-      this._setItem('nhostRefreshToken', refreshToken);
+      this._setItem(NHOST_REFRESH_TOKEN, refreshToken);
     }
   }
 
@@ -137,7 +129,7 @@ export class HasuraAuthClient {
    * the `signIn` function instead.
    *
    * @example
-   * signIn({email, password}); // email password
+   * auth.signIn({email, password}); // email password
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -183,9 +175,10 @@ export class HasuraAuthClient {
    * Use `signIn` to sign in users using email and password, magic link or provider.
    *
    * @example
-   * signIn({email, password}); // email password
-   * signIn({email}); // magic link
-   * signIn({provider}); // provider
+   * auth.signIn({email, password}); // email password
+   * auth.signIn({email}); // magic link
+   * auth.signIn({provider}); // provider
+   * auth.signIn({otp, email }); // OTP
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -235,10 +228,11 @@ export class HasuraAuthClient {
     }
 
     // magic link
-    if ('email' in params) {
+    if ('email' in params && !('otp' in params)) {
       const { email } = params;
 
-      const { error } = await this.api.signInWithMagicLink({
+      const { error } = await this.api.signInWithPasswordless({
+        connection: 'email',
         email,
       });
 
@@ -247,6 +241,66 @@ export class HasuraAuthClient {
       }
 
       return { session: null, mfa: null, error: null };
+    }
+
+    // sign in using OTP
+    if ('otp' in params) {
+      // OTP from email
+      if (params.email) {
+        const { otp, email } = params;
+
+        const { data, error } = await this.api.signInWithOtp({
+          connection: 'email',
+          email,
+          otp,
+        });
+
+        if (error) {
+          return { session: null, mfa: null, error };
+        }
+
+        if (!data) {
+          return {
+            session: null,
+            mfa: null,
+            error: new Error('Incorrect data'),
+          };
+        }
+
+        const { session, mfa } = data;
+
+        if (session) {
+          this._setSession(session);
+        }
+
+        return { session, mfa, error: null };
+      }
+
+      // OTP from SMS
+      if (params.phoneNumber) {
+        // TODO
+        // const { otp, phoneNumber } = params;
+        // const { data, error } = await this.api.signInWithOtp({
+        //   connection: 'sms',
+        //   phoneNumber,
+        //   otp,
+        // });
+        // if (error) {
+        //   return { session: null, mfa: null, error };
+        // }
+        // if (!data) {
+        //   return {
+        //     session: null,
+        //     mfa: null,
+        //     error: new Error('Incorrect data'),
+        //   };
+        // }
+        // const { session, mfa } = data;
+        // if (session) {
+        //   this._setSession(session);
+        // }
+        // return { session, mfa, error: null };
+      }
     }
 
     return {
@@ -271,7 +325,7 @@ export class HasuraAuthClient {
    * Use `verifyEmail` to verify a user's email using a ticket.
    *
    * @example
-   * verifyEmail({email, tricket})
+   * auth.verifyEmail({email, tricket})
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -285,7 +339,7 @@ export class HasuraAuthClient {
    * @docs https://docs.nhost.io/TODO
    */
   public async signOut(params?: { all?: boolean }): Promise<unknown> {
-    const refreshToken = await this._getItem('nhostRefreshToken');
+    const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
 
     this._clearSession();
 
@@ -310,7 +364,7 @@ export class HasuraAuthClient {
    * the access and refresh token is changed.
    *
    * @example
-   * onTokenChanged(() => console.log('access token changed'););
+   * auth.onTokenChanged(() => console.log('access token changed'););
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -340,7 +394,7 @@ export class HasuraAuthClient {
    * vice versa.
    *
    * @example
-   * onAuthStateChanged(({event, session}) => {
+   * auth.onAuthStateChanged(({event, session}) => {
    *   console.log(`auth state changed. State is not ${event} with session: ${session}`)
    * });
    *
@@ -374,7 +428,7 @@ export class HasuraAuthClient {
    *
    * @example
    *
-   * const { authenticated, loading } = nhost.auth.isAuthenticated();
+   * const { authenticated, loading } = auth.isAuthenticated();
    *
    * if (authenticated) {
    *   console.log('User is authenticated');
@@ -402,8 +456,34 @@ export class HasuraAuthClient {
     });
   }
 
+  /**
+   * @deprecated Use `getAccessToken()` instead.
+   */
+
+  public getJWTToken(): string | null {
+    return this.getAccessToken();
+  }
+
+  /**
+   *
+   * Use `getAccessToken` to get the logged in user's access token.
+   *
+   * @example
+   *
+   * const accessToken = auth.getAccessToken();
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public getAccessToken(): string | null {
+    if (!this.session) {
+      return null;
+    }
+
+    return this.session.accessToken;
+  }
+
   public async refreshSession(): Promise<void> {
-    const refreshToken = await this._getItem('nhostRefreshToken');
+    const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
 
     if (!refreshToken) {
       console.warn('no refresh token found. No way of refreshing session');
@@ -454,20 +534,12 @@ export class HasuraAuthClient {
   }
 
   private async _getItem(key: string): Promise<string> {
-    console.log('_getItem');
-
-    console.log(this.clientStorageType);
-
     switch (this.clientStorageType) {
       case 'web':
         if (typeof this.clientStorage.getItem !== 'function') {
           console.error(`this.clientStorage.getItem is not a function`);
           break;
         }
-        console.log({ key });
-
-        console.log(this.clientStorage.getItem(key));
-
         return this.clientStorage.getItem(key) as string;
       case 'custom':
       case 'react-native':
@@ -495,39 +567,39 @@ export class HasuraAuthClient {
     return '';
   }
 
-  private async _removeItem(key: string): Promise<void> {
-    switch (this.clientStorageType) {
-      case 'web':
-        if (typeof this.clientStorage.removeItem !== 'function') {
-          console.error(`this.clientStorage.removeItem is not a function`);
-          break;
-        }
-        return this.clientStorage.removeItem(key);
-      case 'custom':
-      case 'react-native':
-        if (typeof this.clientStorage.removeItem !== 'function') {
-          console.error(`this.clientStorage.removeItem is not a function`);
-          break;
-        }
-        return await this.clientStorage.removeItem(key);
-      case 'capacitor':
-        if (typeof this.clientStorage.remove !== 'function') {
-          console.error(`this.clientStorage.remove is not a function`);
-          break;
-        }
-        await this.clientStorage.remove({ key });
-        break;
-      case 'expo-secure-storage':
-        if (typeof this.clientStorage.deleteItemAsync !== 'function') {
-          console.error(`this.clientStorage.deleteItemAsync is not a function`);
-          break;
-        }
-        this.clientStorage.deleteItemAsync(key);
-        break;
-      default:
-        break;
-    }
-  }
+  // private async _removeItem(key: string): Promise<void> {
+  //   switch (this.clientStorageType) {
+  //     case 'web':
+  //       if (typeof this.clientStorage.removeItem !== 'function') {
+  //         console.error(`this.clientStorage.removeItem is not a function`);
+  //         break;
+  //       }
+  //       return this.clientStorage.removeItem(key);
+  //     case 'custom':
+  //     case 'react-native':
+  //       if (typeof this.clientStorage.removeItem !== 'function') {
+  //         console.error(`this.clientStorage.removeItem is not a function`);
+  //         break;
+  //       }
+  //       return await this.clientStorage.removeItem(key);
+  //     case 'capacitor':
+  //       if (typeof this.clientStorage.remove !== 'function') {
+  //         console.error(`this.clientStorage.remove is not a function`);
+  //         break;
+  //       }
+  //       await this.clientStorage.remove({ key });
+  //       break;
+  //     case 'expo-secure-storage':
+  //       if (typeof this.clientStorage.deleteItemAsync !== 'function') {
+  //         console.error(`this.clientStorage.deleteItemAsync is not a function`);
+  //         break;
+  //       }
+  //       this.clientStorage.deleteItemAsync(key);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // }
 
   // private _generateHeaders(): Headers | null {
   //   if (!this.session) {
@@ -558,7 +630,7 @@ export class HasuraAuthClient {
     paramRefreshToken: string | null
   ): Promise<void> {
     const refreshToken =
-      paramRefreshToken || (await this._getItem('nhostRefreshToken'));
+      paramRefreshToken || (await this._getItem(NHOST_REFRESH_TOKEN));
 
     if (!refreshToken) {
       // place at end of call-stack to let frontend get `null` first (to match SSR)
@@ -571,10 +643,6 @@ export class HasuraAuthClient {
     try {
       // set lock to avoid two refresh token request being sent at the same time with the same token.
       // If so, the last request will fail because the first request used the refresh token
-      if (this.refreshTokenLock) {
-        return;
-      }
-      this.refreshTokenLock = true;
 
       const { session, error } = await this.api.refreshToken({ refreshToken });
 
@@ -588,10 +656,9 @@ export class HasuraAuthClient {
       if (!session) throw new Error('Invalid session data');
 
       this._setSession(session);
-      this.refreshTokenLock = false;
       this.tokenChanged();
     } catch (error) {
-      throw new Error(error);
+      // throw new Error(error);
     }
   }
 
@@ -618,7 +685,6 @@ export class HasuraAuthClient {
     const { authenticated, loading } = this.isAuthenticated();
 
     // clear current session no mather what the previous auth state was
-    await this._removeItem('nhostRefreshToken');
     this.session = null;
     this.initAuthLoading = false;
 
@@ -637,16 +703,16 @@ export class HasuraAuthClient {
 
     this.session = session;
 
-    await this._setItem('nhostRefreshToken', session.refreshToken);
+    await this._setItem(NHOST_REFRESH_TOKEN, session.refreshToken);
 
-    if (!authenticated) {
+    if (this.autoRefreshToken && !authenticated) {
       // start refresh token interval after logging in
       const JWTExpiresIn = session.accessTokenExpiresIn;
       const refreshIntervalTime = this.refreshIntervalTime
         ? this.refreshIntervalTime
         : Math.max(30 * 1000, JWTExpiresIn - 45000); //45 sec before expires
       this.refreshInterval = setInterval(async () => {
-        const refreshToken = await this._getItem('nhostRefreshToken');
+        const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
         this._refreshTokens(refreshToken);
       }, refreshIntervalTime);
 
@@ -658,7 +724,7 @@ export class HasuraAuthClient {
           Date.now() - this.refreshIntervalSleepCheckLastSample >=
           this.sampleRate * 2
         ) {
-          const refreshToken = await this._getItem('nhostRefreshToken');
+          const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
           this._refreshTokens(refreshToken);
         }
         this.refreshIntervalSleepCheckLastSample = Date.now();

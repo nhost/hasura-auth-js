@@ -47,23 +47,43 @@ export type SignInWithEmailAndPasswordOptions = {
   password: string;
 };
 
-export type SignInWithMagicLinkOptions = {
+export type SignInPasswordLessEmailParams = {
   email: string;
   locale?: string;
+  allowedRoles?: string[];
   defaultRole?: string;
-  roles?: string[];
   displayName?: string;
   profile?: Profile;
 };
+
+export type SignInPasswordLessSmsParams = {
+  phoneNumber: string;
+  locale?: string;
+  allowedRoles?: string[];
+  defaultRole?: string;
+  displayName?: string;
+  profile?: Profile;
+};
+
+export type SignInWithPasswordless =
+  | SignInPasswordLessEmailParams
+  | SignInPasswordLessSmsParams;
 
 export type SignInWithProviderOptions = {
   provider: Provider;
 };
 
+export type SignInWithOtp = {
+  email?: string;
+  phoneNumber?: string;
+  otp: string;
+};
+
 export type SignInOptions =
   | SignInWithEmailAndPasswordOptions
-  | SignInWithMagicLinkOptions
-  | SignInWithProviderOptions;
+  | SignInWithPasswordless
+  | SignInWithProviderOptions
+  | SignInWithOtp;
 
 export type SignInReponse = {
   session: Session | null;
@@ -190,6 +210,33 @@ export interface JWTClaims {
 export type Mfa = {
   ticket: string;
 };
+
+export type ApiSignInWithOtpParams =
+  | { connection: 'email'; email: string; otp: string }
+  | { connection: 'sms'; phoneNumber: string; otp: string };
+
+type ApiPasswordLessEmailParams = {
+  connection: 'email';
+  email: string;
+  locale?: string;
+  allowedRoles?: string[];
+  defaultRole?: string;
+  displayName?: string;
+  profile?: Profile;
+};
+type ApiPasswordLessSmsParams = {
+  connection: 'sms';
+  phoneNumber: string;
+  locale?: string;
+  allowedRoles?: string[];
+  defaultRole?: string;
+  displayName?: string;
+  profile?: Profile;
+};
+
+export type ApiSignInWithPasswordless =
+  | ApiPasswordLessEmailParams
+  | ApiPasswordLessSmsParams;
 
 export type ApiSignUpWithEmailAndPasswordReponse =
   | { session: Session; error: null }
