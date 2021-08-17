@@ -1,11 +1,11 @@
-export interface Session {
+export type Session = {
   accessToken: string;
   accessTokenExpiresIn: number;
   refreshToken: string;
   user: User | null;
-}
+};
 
-export interface User {
+export type User = {
   id: string;
   createdAt: string;
   displayName: string;
@@ -20,7 +20,7 @@ export interface User {
   profile: null | {
     [key: string]: string;
   };
-}
+};
 
 export type Profile = {
   [key: string]: string | number | boolean;
@@ -116,12 +116,7 @@ export type SignInReponse = {
 //   autoLogin: boolean;
 // }
 
-export interface StorageConfig {
-  baseURL: string;
-  useCookies: boolean;
-}
-
-export interface ClientStorage {
+export type ClientStorage = {
   // custom
   // localStorage
   // AsyncStorage
@@ -139,7 +134,7 @@ export interface ClientStorage {
   setItemAsync?: (key: string, value: string) => void;
   getItemAsync?: (key: string) => any;
   deleteItemAsync?: (key: string) => void;
-}
+};
 
 // supported client storage types
 export type ClientStorageType =
@@ -157,14 +152,14 @@ export type AuthChangedFunction = (
   session: Session | null
 ) => void;
 
-export interface LoginData {
+export type LoginData = {
   mfa?: boolean;
   ticket?: string;
-}
+};
 
-export interface Headers {
+export type Headers = {
   Authorization?: string;
-}
+};
 
 export type Provider =
   | 'apple'
@@ -176,32 +171,19 @@ export type Provider =
   | 'twitter'
   | 'windowslive';
 
-export interface Session {
-  accessToken: string;
-  accessTokenExpiresIn: number;
-  user: null | User;
-  refreshToken: string; // not present if useCookie
-}
-
-export interface User {
-  id: string;
-  email?: string;
-  display_name?: string;
-  avatar_url?: string;
-}
-export interface JWTHasuraClaims {
+export type JWTHasuraClaims = {
   [claim: string]: string | string[];
   'x-hasura-allowed-roles': string[];
   'x-hasura-default-role': string;
   'x-hasura-user-id': string;
-}
+};
 
 // https://hasura.io/docs/1.0/graphql/core/auth/authentication/jwt.html#the-spec
-export interface JWTClaims {
+export type JWTClaims = {
   sub?: string;
   iat?: number;
   'https://hasura.io/jwt/claims': JWTHasuraClaims;
-}
+};
 
 /////////////////////
 ///// API

@@ -460,7 +460,7 @@ export class HasuraAuthClient {
    * @deprecated Use `getAccessToken()` instead.
    */
 
-  public getJWTToken(): string | null {
+  public getJWTToken(): string | undefined {
     return this.getAccessToken();
   }
 
@@ -474,9 +474,9 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public getAccessToken(): string | null {
+  public getAccessToken(): string | undefined {
     if (!this.session) {
-      return null;
+      return undefined;
     }
 
     return this.session.accessToken;
