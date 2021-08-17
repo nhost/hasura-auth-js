@@ -1,7 +1,7 @@
 {
   "name": "@nhost/hasura-auth-js",
-  "version": "3.1.0",
-  "description": "Hasura Auth Js",
+  "version": "0.0.0",
+  "description": "Hasura Auth JS",
   "license": "MIT",
   "repository": "nhost/hasura-auth-js",
   "main": "./dist/index.js",
