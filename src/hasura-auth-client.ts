@@ -482,14 +482,56 @@ export class HasuraAuthClient {
     return this.session.accessToken;
   }
 
-  public async refreshSession(): Promise<void> {
-    const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
+  /**
+   *
+   * Use `refreshSession()` to refresh the current session or refresh the
+   * session with an provided `refreshToken`.
+   *
+   * @example
+   *
+   * refreshToken();
+   * refreshToken(refreshToken);
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async refreshSession(refreshToken?: string): Promise<void> {
+    const refreshTokenToUse = refreshToken
+      ? refreshToken
+      : await this._getItem(NHOST_REFRESH_TOKEN);
 
-    if (!refreshToken) {
+    if (!refreshTokenToUse) {
       console.warn('no refresh token found. No way of refreshing session');
     }
 
-    return await this._refreshTokens(refreshToken);
+    return await this._refreshTokens(refreshTokenToUse);
+  }
+
+  /**
+   *
+   * Use `getSession()` to get the current session.
+   *
+   * @example
+   *
+   * const session = getSession();
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public getSession() {
+    return this.session;
+  }
+
+  /**
+   *
+   * Use `getUser()` to get the current user.
+   *
+   * @example
+   *
+   * const user = getUser();
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public getUser() {
+    return this.session?.user;
   }
 
   private async _setItem(key: string, value: string): Promise<void> {
