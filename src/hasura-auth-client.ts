@@ -531,7 +531,7 @@ export class HasuraAuthClient {
    * @docs https://docs.nhost.io/TODO
    */
   public getUser() {
-    return this.session?.user;
+    return this.session ? this.session.user : null;
   }
 
   private async _setItem(key: string, value: string): Promise<void> {
