@@ -428,6 +428,26 @@ export class HasuraAuthClient {
    *
    * @example
    *
+   * const  = auth.isAuthenticated();
+   *
+   * if (authenticated) {
+   *   console.log('User is authenticated');
+   * }
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public isAuthenticated(): boolean {
+    return this.session !== null;
+  }
+
+  /**
+   * Use `isAuthenticated` to check if the user is authenticated or not.
+   *
+   * If `isAuthenticated` returns null it means that the SDK is trying to sign
+   * in the user but is waiting for network requests to finish.
+   *
+   * @example
+   *
    * const { authenticated, loading } = auth.isAuthenticated();
    *
    * if (authenticated) {
@@ -436,12 +456,6 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public isAuthenticated(): { authenticated: boolean; loading: boolean } {
-    if (this.initAuthLoading) return { authenticated: false, loading: true };
-
-    return { authenticated: this.session !== null, loading: false };
-  }
-
   public isAuthenticatedAsync(): Promise<unknown> {
     const isAuthenticated = this.isAuthenticated();
 
@@ -454,6 +468,37 @@ export class HasuraAuthClient {
         });
       }
     });
+  }
+
+  /**
+   * Use `getAuthenticationStatus` to get the authentication status of the user.
+   *
+   * if `isLoading` is true, the auth request is in transit and the SDK does not
+   * yet know if the user will be logged in or not.
+   *
+   *
+   * @example
+   *
+   * const { isAuthenticated, isLoading } = auth.getAuthenticationStatus();
+   *
+   * if (isLoading) {
+   *   console.log('Loading...')
+   * }
+   *
+   * if (isAuthenticated) {
+   *   console.log('User is authenticated');
+   * }
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public getAuthenticationStatus(): {
+    isAuthenticated: boolean;
+    isLoading: boolean;
+  } {
+    if (this.initAuthLoading)
+      return { isAuthenticated: false, isLoading: true };
+
+    return { isAuthenticated: this.session !== null, isLoading: false };
   }
 
   /**
@@ -724,7 +769,7 @@ export class HasuraAuthClient {
 
   private async _clearSession(): Promise<void> {
     // get previous state before clearing the session
-    const { authenticated, loading } = this.isAuthenticated();
+    const { isLoading, isAuthenticated } = this.getAuthenticationStatus();
 
     // clear current session no mather what the previous auth state was
     this.session = null;
@@ -732,7 +777,7 @@ export class HasuraAuthClient {
 
     // if the user was previously authenticated, clear all intervals and send a
     // state change call to subscribers
-    if (authenticated || loading) {
+    if (isLoading || isAuthenticated) {
       clearInterval(this.refreshInterval);
       clearInterval(this.refreshSleepCheckInterval);
 
@@ -741,13 +786,13 @@ export class HasuraAuthClient {
   }
 
   private async _setSession(session: Session) {
-    const { authenticated } = this.isAuthenticated();
+    const { isAuthenticated } = this.getAuthenticationStatus();
 
     this.session = session;
 
     await this._setItem(NHOST_REFRESH_TOKEN, session.refreshToken);
 
-    if (this.autoRefreshToken && !authenticated) {
+    if (this.autoRefreshToken && !isAuthenticated) {
       // start refresh token interval after logging in
       const JWTExpiresIn = session.accessTokenExpiresIn;
       const refreshIntervalTime = this.refreshIntervalTime
