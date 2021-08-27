@@ -90,7 +90,6 @@ export class HasuraAuthClient {
 
     // get refresh token from query param (from external OAuth provider callback)
     let refreshToken: string | null = null;
-
     let autoLoginFromQueryParameters = false;
 
     // try to auto login using hashtag query parameters
@@ -101,7 +100,13 @@ export class HasuraAuthClient {
         window.location.toString().split('#')[1]
       );
 
+      if ('refreshToken' in urlParams) {
+        this.clearHashFromUrl();
+        refreshToken = urlParams.refreshToken as string;
+      }
+
       if ('otp' in urlParams && 'email' in urlParams) {
+        this.clearHashFromUrl();
         const { otp, email } = urlParams;
         // sign in with OTP
         this.signIn({
@@ -821,5 +826,13 @@ export class HasuraAuthClient {
     }
 
     this.initAuthLoading = false;
+  }
+
+  private clearHashFromUrl() {
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.href.split('#')[0]
+    );
   }
 }
