@@ -659,39 +659,39 @@ export class HasuraAuthClient {
     return '';
   }
 
-  // private async _removeItem(key: string): Promise<void> {
-  //   switch (this.clientStorageType) {
-  //     case 'web':
-  //       if (typeof this.clientStorage.removeItem !== 'function') {
-  //         console.error(`this.clientStorage.removeItem is not a function`);
-  //         break;
-  //       }
-  //       return this.clientStorage.removeItem(key);
-  //     case 'custom':
-  //     case 'react-native':
-  //       if (typeof this.clientStorage.removeItem !== 'function') {
-  //         console.error(`this.clientStorage.removeItem is not a function`);
-  //         break;
-  //       }
-  //       return await this.clientStorage.removeItem(key);
-  //     case 'capacitor':
-  //       if (typeof this.clientStorage.remove !== 'function') {
-  //         console.error(`this.clientStorage.remove is not a function`);
-  //         break;
-  //       }
-  //       await this.clientStorage.remove({ key });
-  //       break;
-  //     case 'expo-secure-storage':
-  //       if (typeof this.clientStorage.deleteItemAsync !== 'function') {
-  //         console.error(`this.clientStorage.deleteItemAsync is not a function`);
-  //         break;
-  //       }
-  //       this.clientStorage.deleteItemAsync(key);
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
+  private async _removeItem(key: string): Promise<void> {
+    switch (this.clientStorageType) {
+      case 'web':
+        if (typeof this.clientStorage.removeItem !== 'function') {
+          console.error(`this.clientStorage.removeItem is not a function`);
+          break;
+        }
+        return this.clientStorage.removeItem(key);
+      case 'custom':
+      case 'react-native':
+        if (typeof this.clientStorage.removeItem !== 'function') {
+          console.error(`this.clientStorage.removeItem is not a function`);
+          break;
+        }
+        return await this.clientStorage.removeItem(key);
+      case 'capacitor':
+        if (typeof this.clientStorage.remove !== 'function') {
+          console.error(`this.clientStorage.remove is not a function`);
+          break;
+        }
+        await this.clientStorage.remove({ key });
+        break;
+      case 'expo-secure-storage':
+        if (typeof this.clientStorage.deleteItemAsync !== 'function') {
+          console.error(`this.clientStorage.deleteItemAsync is not a function`);
+          break;
+        }
+        this.clientStorage.deleteItemAsync(key);
+        break;
+      default:
+        break;
+    }
+  }
 
   // private _generateHeaders(): Headers | null {
   //   if (!this.session) {
@@ -779,6 +779,8 @@ export class HasuraAuthClient {
     // clear current session no mather what the previous auth state was
     this.session = null;
     this.initAuthLoading = false;
+
+    await this._removeItem(NHOST_REFRESH_TOKEN);
 
     // if the user was previously authenticated, clear all intervals and send a
     // state change call to subscribers
