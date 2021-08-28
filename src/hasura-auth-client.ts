@@ -232,13 +232,29 @@ export class HasuraAuthClient {
       return { session, mfa, error: null };
     }
 
-    // magic link
+    // passwordless Email (magic link)
     if ('email' in params && !('otp' in params)) {
       const { email } = params;
 
       const { error } = await this.api.signInWithPasswordless({
         connection: 'email',
         email,
+      });
+
+      if (error) {
+        return { session: null, mfa: null, error };
+      }
+
+      return { session: null, mfa: null, error: null };
+    }
+
+    // passwordless SMS
+    if ('phoneNumber' in params && !('otp' in params)) {
+      const { phoneNumber } = params;
+
+      const { error } = await this.api.signInWithPasswordless({
+        connection: 'sms',
+        phoneNumber,
       });
 
       if (error) {
@@ -283,28 +299,27 @@ export class HasuraAuthClient {
 
       // OTP from SMS
       if (params.phoneNumber) {
-        // TODO
-        // const { otp, phoneNumber } = params;
-        // const { data, error } = await this.api.signInWithOtp({
-        //   connection: 'sms',
-        //   phoneNumber,
-        //   otp,
-        // });
-        // if (error) {
-        //   return { session: null, mfa: null, error };
-        // }
-        // if (!data) {
-        //   return {
-        //     session: null,
-        //     mfa: null,
-        //     error: new Error('Incorrect data'),
-        //   };
-        // }
-        // const { session, mfa } = data;
-        // if (session) {
-        //   this._setSession(session);
-        // }
-        // return { session, mfa, error: null };
+        const { otp, phoneNumber } = params;
+        const { data, error } = await this.api.signInWithOtp({
+          connection: 'sms',
+          phoneNumber,
+          otp,
+        });
+        if (error) {
+          return { session: null, mfa: null, error };
+        }
+        if (!data) {
+          return {
+            session: null,
+            mfa: null,
+            error: new Error('Incorrect data'),
+          };
+        }
+        const { session, mfa } = data;
+        if (session) {
+          this._setSession(session);
+        }
+        return { session, mfa, error: null };
       }
     }
 
