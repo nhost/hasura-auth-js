@@ -184,10 +184,10 @@ export class HasuraAuthClient {
    * @example
    * signIn({ email, password }); // Sign in with email and password
    * signIn({ provider }); // Sign in with an external provider (ex Google or Facebook)
-   * signIn({ email }); // Passwordless sign in with Email (Magic Link)
-   * signIn({ email, otp }); // Finish passwordless sign in with email (OTP)
-   * signIn({ phoneNumber }); // Passwordless sign in with SMS
-   * signIn({ phoneNumber, otp }); // Finish passwordless sign in with SMS (OTP)
+   * signIn({ email }); // [step 1/2] Passwordless sign in with Email (Magic Link)
+   * signIn({ email, otp }); // [step 2/2] Finish passwordless sign in with email (OTP)
+   * signIn({ phoneNumber }); // [step 1/2] Passwordless sign in with SMS
+   * signIn({ phoneNumber, otp }); // [step 2/2] Finish passwordless sign in with SMS (OTP)
    *
    * @docs https://docs.nhost.io/TODO
    */
