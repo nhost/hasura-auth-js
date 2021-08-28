@@ -177,13 +177,17 @@ export class HasuraAuthClient {
   }
 
   /**
-   * Use `signIn` to sign in users using email and password, magic link or provider.
+   * Use `signIn` to sign in users using email and password, passwordless
+   * (email or sms) or an external provider.
+   * `signIn` can be used in various ways depending on the parameters.
    *
    * @example
-   * auth.signIn({email, password}); // email password
-   * auth.signIn({email}); // magic link
-   * auth.signIn({provider}); // provider
-   * auth.signIn({otp, email }); // OTP
+   * signIn({ email, password }); // Sign in with email and password
+   * signIn({ provider }); // Sign in with an external provider (ex Google or Facebook)
+   * signIn({ email }); // Passwordless sign in with Email (Magic Link)
+   * signIn({ email, otp }); // Finish passwordless sign in with email (OTP)
+   * signIn({ phoneNumber }); // Passwordless sign in with SMS
+   * signIn({ phoneNumber, otp }); // Finish passwordless sign in with SMS (OTP)
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -330,26 +334,6 @@ export class HasuraAuthClient {
     };
   }
 
-  // public verifyOtp({ params }: { params: string }): Promise<{
-  //   session: Session | null;
-  //   mfa: null | {
-  //     ticket: string;
-  //   };
-  //   error: Error | null;
-  // }> {
-
-  //   return {}};
-  // }
-
-  /**
-   * Use `verifyEmail` to verify a user's email using a ticket.
-   *
-   * @example
-   * auth.verifyEmail({email, tricket})
-   *
-   * @docs https://docs.nhost.io/TODO
-   */
-
   /**
    * Use `signOut` to sign out a user
    *
@@ -370,6 +354,14 @@ export class HasuraAuthClient {
     return { error };
   }
 
+  /**
+   * Use `verifyEmail` to verify a user's email using a ticket.
+   *
+   * @example
+   * auth.verifyEmail({email, tricket})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
   public async verifyEmail(params: {
     email: string;
     ticket: string;
