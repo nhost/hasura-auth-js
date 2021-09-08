@@ -4,6 +4,7 @@ import { NHOST_REFRESH_TOKEN } from './utils/constants';
 import { inMemoryLocalStorage, isBrowser } from './utils/helpers';
 import {
   AuthChangedFunction,
+  OnTokenChangedFunction,
   AuthChangeEvent,
   ClientStorage,
   ClientStorageType,
@@ -380,7 +381,7 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public onTokenChanged(fn: Function): Function {
+  public onTokenChanged(fn: OnTokenChangedFunction): Function {
     this.onTokenChangedFunctions.push(fn);
 
     // get internal index of this function
@@ -763,7 +764,7 @@ export class HasuraAuthClient {
 
   private tokenChanged(): void {
     for (const tokenChangedFunction of this.onTokenChangedFunctions) {
-      tokenChangedFunction();
+      tokenChangedFunction(this.session);
     }
   }
 

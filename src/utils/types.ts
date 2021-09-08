@@ -152,6 +152,8 @@ export type AuthChangedFunction = (
   session: Session | null
 ) => void;
 
+export type OnTokenChangedFunction = (session: Session | null) => void;
+
 export type LoginData = {
   mfa?: boolean;
   ticket?: string;
