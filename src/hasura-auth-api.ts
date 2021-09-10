@@ -1,11 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 import {
-  apiRefreshTokenResponse,
   ApiSignInResponse,
   ApiSignInWithOtpParams,
   ApiSignInWithPasswordless,
   ApiSignOutResponse,
   ApiSignUpWithEmailAndPasswordReponse,
+  ApiRefreshTokenResponse,
   SignUpWithEmailAndPasswordOptions,
 } from './utils/types';
 
@@ -36,7 +36,7 @@ export class HasuraAuthApi {
     }
   }
 
-  async signInWithEmailAndPassword(params: {
+  public async signInWithEmailAndPassword(params: {
     email: string;
     password: string;
   }): Promise<ApiSignInResponse> {
@@ -48,7 +48,7 @@ export class HasuraAuthApi {
     }
   }
 
-  async signInWithPasswordless(
+  public async signInWithPasswordless(
     params: ApiSignInWithPasswordless
   ): Promise<ApiSignInResponse> {
     try {
@@ -62,7 +62,7 @@ export class HasuraAuthApi {
     }
   }
 
-  async signInWithOtp(
+  public async signInWithOtp(
     params: ApiSignInWithOtpParams
   ): Promise<ApiSignInResponse> {
     try {
@@ -73,7 +73,7 @@ export class HasuraAuthApi {
     }
   }
 
-  async signOut(params: {
+  public async signOut(params: {
     refreshToken: string;
     all?: boolean;
   }): Promise<ApiSignOutResponse> {
@@ -86,9 +86,9 @@ export class HasuraAuthApi {
     }
   }
 
-  async refreshToken(params: {
+  public async refreshToken(params: {
     refreshToken: string;
-  }): Promise<apiRefreshTokenResponse> {
+  }): Promise<ApiRefreshTokenResponse> {
     try {
       const res = await this.httpClient.post('/token', params);
 
@@ -98,7 +98,7 @@ export class HasuraAuthApi {
     }
   }
 
-  async verifyEmail(params: {
+  public async verifyEmail(params: {
     email: string;
     ticket: string;
   }): Promise<ApiSignInResponse> {

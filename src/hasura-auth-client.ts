@@ -22,7 +22,7 @@ export class HasuraAuthClient {
   private onAuthChangedFunctions: AuthChangedFunction[];
 
   private refreshInterval: any;
-  private refreshIntervalTime: number | null;
+  private refreshIntervalTime: number | undefined;
 
   private clientStorage: ClientStorage;
   private clientStorageType: string;
@@ -41,7 +41,7 @@ export class HasuraAuthClient {
     url,
     autoRefreshToken = true,
     autoLogin = true,
-    refreshIntervalTime = 5000,
+    refreshIntervalTime,
     clientStorage,
     clientStorageType = 'web',
   }: {
@@ -120,7 +120,6 @@ export class HasuraAuthClient {
 
     // if empty string, then set it to null
     // refreshToken = refreshToken ? refreshToken : null;
-
     if (!autoLoginFromQueryParameters && autoLogin) {
       this._autoLogin(refreshToken);
     } else if (refreshToken) {
@@ -810,6 +809,7 @@ export class HasuraAuthClient {
     if (this.autoRefreshToken && !isAuthenticated) {
       // start refresh token interval after logging in
       const JWTExpiresIn = session.accessTokenExpiresIn;
+
       const refreshIntervalTime = this.refreshIntervalTime
         ? this.refreshIntervalTime
         : Math.max(30 * 1000, JWTExpiresIn - 45000); //45 sec before expires

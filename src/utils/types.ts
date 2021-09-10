@@ -236,7 +236,7 @@ export type ApiSignInResponse =
     }
   | { data: null; error: Error };
 
-export type apiRefreshTokenResponse =
+export type ApiRefreshTokenResponse =
   | { session: Session; error: null }
   | { session: null; error: Error };
 
