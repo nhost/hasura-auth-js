@@ -102,12 +102,18 @@ export class HasuraAuthClient {
       );
 
       if ('refreshToken' in urlParams) {
-        this.clearHashFromUrl();
+        // We must keep this hash becaus it might cause error during double
+        // render in dev mode for react
+        // https://reactjs.org/docs/strict-mode.html
+        // this.clearHashFromUrl();
         refreshToken = urlParams.refreshToken as string;
       }
 
       if ('otp' in urlParams && 'email' in urlParams) {
-        this.clearHashFromUrl();
+        // We must keep this hash becaus it might cause error during double
+        // render in dev mode for react
+        // https://reactjs.org/docs/strict-mode.html
+        // this.clearHashFromUrl();
         const { otp, email } = urlParams;
         // sign in with OTP
         this.signIn({
@@ -753,6 +759,10 @@ export class HasuraAuthClient {
       }
 
       if (!session) throw new Error('Invalid session data');
+
+      console.log(
+        'user has logge in, about to set session and trigger token changed'
+      );
 
       this._setSession(session);
       this.tokenChanged();
