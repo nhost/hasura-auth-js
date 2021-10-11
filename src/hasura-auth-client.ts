@@ -8,7 +8,6 @@ import {
   AuthChangeEvent,
   ClientStorage,
   ClientStorageType,
-  // Headers,
   Session,
   SignInOptions,
   SignUpOptions,
@@ -760,10 +759,6 @@ export class HasuraAuthClient {
 
       if (!session) throw new Error('Invalid session data');
 
-      console.log(
-        'user has logge in, about to set session and trigger token changed'
-      );
-
       this._setSession(session);
       this.tokenChanged();
     } catch (error) {
@@ -822,11 +817,12 @@ export class HasuraAuthClient {
 
       const refreshIntervalTime = this.refreshIntervalTime
         ? this.refreshIntervalTime
-        : Math.max(30 * 1000, JWTExpiresIn - 45000); //45 sec before expires
+        : Math.max(1, JWTExpiresIn - 1); //1 min before jwt expires
+
       this.refreshInterval = setInterval(async () => {
         const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
         this._refreshTokens(refreshToken);
-      }, refreshIntervalTime);
+      }, refreshIntervalTime * 1000);
 
       // refresh token after computer has been sleeping
       // https://stackoverflow.com/questions/14112708/start-calling-js-function-when-pc-wakeup-from-sleep-mode
@@ -848,11 +844,11 @@ export class HasuraAuthClient {
     this.initAuthLoading = false;
   }
 
-  private clearHashFromUrl() {
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.href.split('#')[0]
-    );
-  }
+  // private clearHashFromUrl() {
+  //   window.history.replaceState(
+  //     {},
+  //     document.title,
+  //     window.location.href.split('#')[0]
+  //   );
+  // }
 }
