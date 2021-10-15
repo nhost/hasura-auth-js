@@ -29,11 +29,13 @@ export type Profile = {
 export type SignUpWithEmailAndPasswordOptions = {
   email: string;
   password: string;
-  locale?: string;
-  defaultRole?: string;
-  roles?: string[];
-  displayName?: string;
-  profile?: Profile;
+  options?: {
+    locale?: string;
+    defaultRole?: string;
+    roles?: string[];
+    displayName?: string;
+    profile?: Profile;
+  };
 };
 
 export type SignUpOptions = SignUpWithEmailAndPasswordOptions;
@@ -49,20 +51,22 @@ export type SignInWithEmailAndPasswordOptions = {
 
 export type SignInPasswordLessEmailParams = {
   email: string;
-  locale?: string;
-  allowedRoles?: string[];
-  defaultRole?: string;
-  displayName?: string;
-  profile?: Profile;
+  options?: {
+    displayName?: string;
+    locale?: string;
+    allowedRoles?: string[];
+    defaultRole?: string;
+  };
 };
 
 export type SignInPasswordLessSmsParams = {
   phoneNumber: string;
-  locale?: string;
-  allowedRoles?: string[];
-  defaultRole?: string;
-  displayName?: string;
-  profile?: Profile;
+  options?: {
+    displayName?: string;
+    locale?: string;
+    allowedRoles?: string[];
+    defaultRole?: string;
+  };
 };
 
 export type SignInWithPasswordless =
@@ -95,26 +99,6 @@ export type SignInReponse = {
   providerUrl?: string;
   provider?: string;
 };
-
-// export type signUpCredentials = {
-//   email?: string;
-//   password?: string;
-//   provider?: Provider;
-//   locale?: string;
-//   defaultRole?: string;
-//   roles?: string[];
-//   displayName?: string;
-//   profile?: Profile;
-// };
-
-// export interface HasuraAuthClientParams {
-//   url: string;
-//   refreshIntervalTime: number | null;
-//   clientStorage: ClientStorage;
-//   clientStorageType: string;
-//   ssr?: boolean;
-//   autoLogin: boolean;
-// }
 
 export type ClientStorage = {
   // custom
@@ -202,20 +186,22 @@ export type ApiSignInWithOtpParams =
 type ApiPasswordLessEmailParams = {
   connection: 'email';
   email: string;
-  locale?: string;
-  allowedRoles?: string[];
-  defaultRole?: string;
-  displayName?: string;
-  profile?: Profile;
+  options?: {
+    displayName?: string;
+    locale?: string;
+    allowedRoles?: string[];
+    defaultRole?: string;
+  };
 };
 type ApiPasswordLessSmsParams = {
   connection: 'sms';
   phoneNumber: string;
-  locale?: string;
-  allowedRoles?: string[];
-  defaultRole?: string;
-  displayName?: string;
-  profile?: Profile;
+  options?: {
+    displayName?: string;
+    locale?: string;
+    allowedRoles?: string[];
+    defaultRole?: string;
+  };
 };
 
 export type ApiSignInWithPasswordless =

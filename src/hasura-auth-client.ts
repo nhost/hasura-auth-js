@@ -143,16 +143,8 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public async signUp(options: SignUpOptions): Promise<SignUpResponse> {
-    const {
-      email,
-      password,
-      displayName,
-      locale,
-      roles,
-      defaultRole,
-      profile,
-    } = options;
+  public async signUp(signUpOptions: SignUpOptions): Promise<SignUpResponse> {
+    const { email, password, options } = signUpOptions;
 
     // email and password
     if (email && password) {
@@ -160,11 +152,7 @@ export class HasuraAuthClient {
       const { session, error } = await this.api.signUpWithEmailAndPassword({
         email,
         password,
-        displayName,
-        locale,
-        defaultRole,
-        roles,
-        profile,
+        options,
       });
 
       if (error) {
