@@ -1,12 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 import {
+  SignUpEmailPasswordParams,
+  SignInEmailPasswordParams,
+  SignInPasswordlessEmailParmas,
+  SignInPasswordlessSmsParmas,
+  SignInPasswordlessSmsOtpParams,
   ApiSignInResponse,
-  ApiSignInWithOtpParams,
-  ApiSignInWithPasswordless,
   ApiSignOutResponse,
-  ApiSignUpWithEmailAndPasswordReponse,
   ApiRefreshTokenResponse,
-  SignUpWithEmailAndPasswordOptions,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -25,21 +26,20 @@ export class HasuraAuthApi {
   /**
    * Use `signUpWithEmailAndPassword` to sign up a new user using email and password.
    */
-  public async signUpWithEmailAndPassword(
-    options: SignUpWithEmailAndPasswordOptions
-  ): Promise<ApiSignUpWithEmailAndPasswordReponse> {
+  public async signUpEmailPassword(
+    params: SignUpEmailPasswordParams
+  ): Promise<ApiSignInResponse> {
     try {
-      const res = await this.httpClient.post('/signup/email-password', options);
-      return { session: res.data.session, error: null };
+      const res = await this.httpClient.post('/signup/email-password', params);
+      return { data: res.data, error: null };
     } catch (error) {
-      return { session: null, error };
+      return { data: null, error };
     }
   }
 
-  public async signInWithEmailAndPassword(params: {
-    email: string;
-    password: string;
-  }): Promise<ApiSignInResponse> {
+  public async signInEmailPassword(
+    params: SignInEmailPasswordParams
+  ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post('/signin/email-password', params);
       return { data: res.data, error: null };
@@ -48,12 +48,12 @@ export class HasuraAuthApi {
     }
   }
 
-  public async signInWithPasswordless(
-    params: ApiSignInWithPasswordless
+  public async signInPasswordlessEmail(
+    params: SignInPasswordlessEmailParmas
   ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post(
-        '/signin/passwordless/start',
+        '/signin/passwordless/email',
         params
       );
       return { data: res.data, error: null };
@@ -62,11 +62,28 @@ export class HasuraAuthApi {
     }
   }
 
-  public async signInWithOtp(
-    params: ApiSignInWithOtpParams
+  public async signInPasswordlessSms(
+    params: SignInPasswordlessSmsParmas
   ): Promise<ApiSignInResponse> {
     try {
-      const res = await this.httpClient.post('/signin/otp', params);
+      const res = await this.httpClient.post(
+        '/signin/passwordless/sms',
+        params
+      );
+      return { data: res.data, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  }
+
+  public async signInPasswordlessSmsOtp(
+    params: SignInPasswordlessSmsOtpParams
+  ): Promise<ApiSignInResponse> {
+    try {
+      const res = await this.httpClient.post(
+        '/signin/passwordless/sms/otp',
+        params
+      );
       return { data: res.data, error: null };
     } catch (error) {
       return { data: null, error };
@@ -97,6 +114,12 @@ export class HasuraAuthApi {
       return { session: null, error };
     }
   }
+
+  // resetPassword
+  // changePassword
+  // sendVerificationEmail
+  // changeEmail
+  // deanonymize
 
   public async verifyEmail(params: {
     email: string;

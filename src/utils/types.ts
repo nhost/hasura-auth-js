@@ -17,16 +17,11 @@ export type User = {
   roles: {
     [key: string]: string;
   };
-  profile: null | {
-    [key: string]: string;
-  };
 };
 
-export type Profile = {
-  [key: string]: string | number | boolean;
-};
+// Sign Up
 
-export type SignUpWithEmailAndPasswordOptions = {
+export type SignUpEmailPasswordParams = {
   email: string;
   password: string;
   options?: {
@@ -34,60 +29,65 @@ export type SignUpWithEmailAndPasswordOptions = {
     defaultRole?: string;
     roles?: string[];
     displayName?: string;
-    profile?: Profile;
   };
 };
 
-export type SignUpOptions = SignUpWithEmailAndPasswordOptions;
+export type SignUpParams = SignUpEmailPasswordParams;
 
 export type SignUpResponse =
   | { session: Session | null; error: null }
   | { session: null; error: Error };
 
-export type SignInWithEmailAndPasswordOptions = {
+// Sign In
+export type SignInEmailPasswordParams = {
   email: string;
   password: string;
 };
 
-export type SignInPasswordLessEmailParams = {
+export type SignInPasswordlessEmailParmas = {
   email: string;
   options?: {
-    displayName?: string;
     locale?: string;
     allowedRoles?: string[];
     defaultRole?: string;
+    displayName?: string;
+    redirectTo?: string;
   };
 };
 
-export type SignInPasswordLessSmsParams = {
+export type SignInPasswordlessSmsParmas = {
   phoneNumber: string;
   options?: {
-    displayName?: string;
     locale?: string;
     allowedRoles?: string[];
     defaultRole?: string;
+    displayName?: string;
+    redirectTo?: string;
   };
 };
 
-export type SignInWithPasswordless =
-  | SignInPasswordLessEmailParams
-  | SignInPasswordLessSmsParams;
-
-export type SignInWithProviderOptions = {
-  provider: Provider;
-};
-
-export type SignInWithOtp = {
-  email?: string;
-  phoneNumber?: string;
+export type SignInPasswordlessSmsOtpParams = {
+  phoneNumber: string;
   otp: string;
 };
 
-export type SignInOptions =
-  | SignInWithEmailAndPasswordOptions
-  | SignInWithPasswordless
-  | SignInWithProviderOptions
-  | SignInWithOtp;
+export type SignInWithProviderOptions = {
+  provider: Provider;
+  options?: {
+    locale?: string;
+    allowedRoles?: string[];
+    defaultRole?: string;
+    displayName?: string;
+    redirectTo?: string;
+  };
+};
+
+export type SignInParams =
+  | SignInEmailPasswordParams
+  | SignInPasswordlessEmailParmas
+  | SignInPasswordlessSmsParmas
+  | SignInPasswordlessSmsOtpParams
+  | SignInWithProviderOptions;
 
 export type SignInReponse = {
   session: Session | null;
@@ -179,36 +179,7 @@ export type Mfa = {
   ticket: string;
 };
 
-export type ApiSignInWithOtpParams =
-  | { connection: 'email'; email: string; otp: string }
-  | { connection: 'sms'; phoneNumber: string; otp: string };
-
-type ApiPasswordLessEmailParams = {
-  connection: 'email';
-  email: string;
-  options?: {
-    displayName?: string;
-    locale?: string;
-    allowedRoles?: string[];
-    defaultRole?: string;
-  };
-};
-type ApiPasswordLessSmsParams = {
-  connection: 'sms';
-  phoneNumber: string;
-  options?: {
-    displayName?: string;
-    locale?: string;
-    allowedRoles?: string[];
-    defaultRole?: string;
-  };
-};
-
-export type ApiSignInWithPasswordless =
-  | ApiPasswordLessEmailParams
-  | ApiPasswordLessSmsParams;
-
-export type ApiSignUpWithEmailAndPasswordReponse =
+export type ApiSignUpEmailPasswordResponse =
   | { session: Session; error: null }
   | { session: null; error: Error };
 

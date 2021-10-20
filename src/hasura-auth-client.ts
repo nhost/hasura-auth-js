@@ -9,8 +9,8 @@ import {
   ClientStorage,
   ClientStorageType,
   Session,
-  SignInOptions,
-  SignUpOptions,
+  SignUpParams,
+  SignInParams,
   SignUpResponse,
 } from './utils/types';
 
@@ -52,10 +52,6 @@ export class HasuraAuthClient {
     clientStorageType?: ClientStorageType;
   }) {
     this.refreshIntervalTime = refreshIntervalTime;
-
-    if (isBrowser()) {
-      localStorage.setItem('test', 'okok?');
-    }
 
     if (!clientStorage) {
       if (isBrowser()) {
@@ -143,21 +139,23 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public async signUp(signUpOptions: SignUpOptions): Promise<SignUpResponse> {
-    const { email, password, options } = signUpOptions;
+  public async signUp(params: SignUpParams): Promise<SignUpResponse> {
+    const { email, password, options } = params;
 
     // email and password
     if (email && password) {
       // sign up with email and password
-      const { session, error } = await this.api.signUpWithEmailAndPassword({
-        email,
-        password,
-        options,
-      });
+      const { data, error } = await this.api.signUpEmailPassword(params);
 
       if (error) {
         return { session: null, error };
       }
+
+      if (!data) {
+        return { session: null, error: new Error('Incorrect data') };
+      }
+
+      const { session } = data;
 
       if (session) {
         this._setSession(session);
@@ -166,7 +164,7 @@ export class HasuraAuthClient {
       return { session, error: null };
     }
 
-    return { session: null, error: new Error('incorrect combination') };
+    return { session: null, error: new Error('incorrect parameters') };
   }
 
   /**
@@ -184,7 +182,7 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public async signIn(params: SignInOptions): Promise<{
+  public async signIn(params: SignInParams): Promise<{
     session: Session | null;
     mfa: null | {
       ticket: string;
@@ -206,11 +204,7 @@ export class HasuraAuthClient {
 
     // email password
     if ('email' in params && 'password' in params) {
-      const { email, password } = params;
-      const { data, error } = await this.api.signInWithEmailAndPassword({
-        email,
-        password,
-      });
+      const { data, error } = await this.api.signInEmailPassword(params);
 
       if (error) {
         return { session: null, mfa: null, error };
@@ -231,12 +225,7 @@ export class HasuraAuthClient {
 
     // passwordless Email (magic link)
     if ('email' in params && !('otp' in params)) {
-      const { email } = params;
-
-      const { error } = await this.api.signInWithPasswordless({
-        connection: 'email',
-        email,
-      });
+      const { error } = await this.api.signInPasswordlessEmail(params);
 
       if (error) {
         return { session: null, mfa: null, error };
@@ -247,12 +236,7 @@ export class HasuraAuthClient {
 
     // passwordless SMS
     if ('phoneNumber' in params && !('otp' in params)) {
-      const { phoneNumber } = params;
-
-      const { error } = await this.api.signInWithPasswordless({
-        connection: 'sms',
-        phoneNumber,
-      });
+      const { error } = await this.api.signInPasswordlessSms(params);
 
       if (error) {
         return { session: null, mfa: null, error };
@@ -263,67 +247,29 @@ export class HasuraAuthClient {
 
     // sign in using OTP
     if ('otp' in params) {
-      // OTP from email
-      if (params.email) {
-        const { otp, email } = params;
+      const { data, error } = await this.api.signInPasswordlessSmsOtp(params);
 
-        const { data, error } = await this.api.signInWithOtp({
-          connection: 'email',
-          email,
-          otp,
-        });
-
-        if (error) {
-          return { session: null, mfa: null, error };
-        }
-
-        if (!data) {
-          return {
-            session: null,
-            mfa: null,
-            error: new Error('Incorrect data'),
-          };
-        }
-
-        const { session, mfa } = data;
-
-        if (session) {
-          this._setSession(session);
-        }
-
-        return { session, mfa, error: null };
+      if (error) {
+        return { session: null, mfa: null, error };
       }
-
-      // OTP from SMS
-      if (params.phoneNumber) {
-        const { otp, phoneNumber } = params;
-        const { data, error } = await this.api.signInWithOtp({
-          connection: 'sms',
-          phoneNumber,
-          otp,
-        });
-        if (error) {
-          return { session: null, mfa: null, error };
-        }
-        if (!data) {
-          return {
-            session: null,
-            mfa: null,
-            error: new Error('Incorrect data'),
-          };
-        }
-        const { session, mfa } = data;
-        if (session) {
-          this._setSession(session);
-        }
-        return { session, mfa, error: null };
+      if (!data) {
+        return {
+          session: null,
+          mfa: null,
+          error: new Error('Incorrect data'),
+        };
       }
+      const { session, mfa } = data;
+      if (session) {
+        this._setSession(session);
+      }
+      return { session, mfa, error: null };
     }
 
     return {
       session: null,
       mfa: null,
-      error: new Error('incorrect combination'),
+      error: new Error('incorrect parameters'),
     };
   }
 
@@ -428,8 +374,9 @@ export class HasuraAuthClient {
   /**
    * Use `isAuthenticated` to check if the user is authenticated or not.
    *
-   * If `isAuthenticated` returns null it means that the SDK is trying to sign
-   * in the user but is waiting for network requests to finish.
+   * Note that `isAuthenticated` can return `false` before the auth status has
+   * been resolved. Use `getAuthenticationStatus` to get both loading and auth status.
+   *
    *
    * @example
    *
@@ -446,26 +393,26 @@ export class HasuraAuthClient {
   }
 
   /**
-   * Use `isAuthenticated` to check if the user is authenticated or not.
-   *
-   * If `isAuthenticated` returns null it means that the SDK is trying to sign
-   * in the user but is waiting for network requests to finish.
+   * Use `isAuthenticatedAsync` to wait and check if the user is authenticated or not.
    *
    * @example
    *
-   * const { authenticated, loading } = auth.isAuthenticated();
+   * const isAuthenticated  = awiat auth.isAuthenticatedAsync();
    *
-   * if (authenticated) {
+   * if (isAuthenticated) {
    *   console.log('User is authenticated');
    * }
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public isAuthenticatedAsync(): Promise<unknown> {
-    const isAuthenticated = this.isAuthenticated();
-
+  public isAuthenticatedAsync(): Promise<boolean> {
     return new Promise((resolve) => {
-      if (isAuthenticated !== null) resolve(isAuthenticated);
+      // if init auth loading is already completed, we can return the value of `isAuthenticated`.
+      if (!this.initAuthLoading) {
+        resolve(this.isAuthenticated());
+      }
+      // if no, let's subscribe and wait for an auth state change event and
+      // resolve the promise when we receive the event
       else {
         const unsubscribe = this.onAuthStateChanged((event, _session) => {
           resolve(event === 'SIGNED_IN');
