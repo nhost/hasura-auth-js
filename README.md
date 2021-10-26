@@ -1,14 +1,14 @@
-# Nhost JS SDK
+# Hasura Auth JS SDK
 
-Nhost JS SDK to handle **Auth** and **Storage** with [Nhost](https://nhost.io).
+Hasura Auth JS SDK to handle **Auth** with [Hasura](https://hasura.io/).
 
 ## Install
 
-`$ npm install nhost-js-sdk`
+`$ npm install hasura-auth-js`
 
 or
 
-`$ yarn add nhost-js-sdk`
+`$ yarn add hasura-auth-js`
 
 ## Documentation
 
