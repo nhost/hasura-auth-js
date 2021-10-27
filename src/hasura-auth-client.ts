@@ -11,12 +11,16 @@ import {
   Session,
   SignUpParams,
   SignInParams,
+  ResetPasswordParams,
   SendVerificationEmailParams,
   ChangePasswordParams,
+  ChangeEmailParams,
+  DeanonymizeParams,
   SignUpResponse,
   ApiResetPasswordResponse,
   ApiSendVerificationEmailResponse,
-  ResetPasswordParams,
+  ApiChangeEmailResponse,
+  ApiDeanonymizeResponse,
 } from './utils/types';
 
 export class HasuraAuthClient {
@@ -348,10 +352,11 @@ export class HasuraAuthClient {
   }
 
   /**
-   * Use `resetPassword` to reset a user's password.
+   * Use `sendVerificationEmail` to send a verification email
+   * to the specified email.
    *
    * @example
-   * auth.resetPassword({email})
+   * auth.sendVerificationEmail({email})
    *
    * @docs https://docs.nhost.io/TODO
    */
@@ -359,6 +364,38 @@ export class HasuraAuthClient {
     params: SendVerificationEmailParams
   ): Promise<ApiSendVerificationEmailResponse> {
     const { error } = await this.api.resetPassword(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `changeEmail` to change a user's email
+   *
+   * @example
+   * auth.changeEmail({newEmail})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async changeEmail(
+    params: ChangeEmailParams
+  ): Promise<ApiChangeEmailResponse> {
+    const { error } = await this.api.changeEmail(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `deanonymize` to change a user's email
+   *
+   * @example
+   * auth.deanonymize({signInMethod: 'email-password', email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async deanonymize(
+    params: DeanonymizeParams
+  ): Promise<ApiDeanonymizeResponse> {
+    const { error } = await this.api.deanonymize(params);
 
     return { error };
   }

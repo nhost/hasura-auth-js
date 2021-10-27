@@ -116,6 +116,15 @@ export type ChangeEmailParams = {
   };
 };
 
+export type DeanonymizeParams = {
+  signInMethod: 'email-password' | 'passwordless';
+  email: string;
+  password?: string;
+  connection?: 'email' | 'sms';
+  defaultRole?: string;
+  allowedRoles?: string[];
+};
+
 export type SignInReponse = {
   session: Session | null;
   error: Error | null;
@@ -233,3 +242,5 @@ export type ApiChangePasswordResponse = { error: null | Error };
 export type ApiSendVerificationEmailResponse = { error: null | Error };
 
 export type ApiChangeEmailResponse = { error: null | Error };
+
+export type ApiDeanonymizeResponse = { error: null | Error };

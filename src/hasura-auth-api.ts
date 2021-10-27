@@ -17,6 +17,7 @@ import {
   ApiChangePasswordResponse,
   ApiSendVerificationEmailResponse,
   ApiChangeEmailResponse,
+  ApiDeanonymizeResponse,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -172,7 +173,17 @@ export class HasuraAuthApi {
     }
   }
 
-  public async deanonymize(params: DeanonymizeParams);
+  public async deanonymize(
+    params: DeanonymizeParams
+  ): Promise<ApiDeanonymizeResponse> {
+    try {
+      await this.httpClient.post('/user/deanonymize', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
 
   // deanonymize
 
