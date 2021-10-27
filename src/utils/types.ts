@@ -97,6 +97,11 @@ export type ResetPasswordParams = {
   };
 };
 
+export type ChangePasswordParams = {
+  oldPassword: string;
+  newPassword: string;
+};
+
 export type SignInReponse = {
   session: Session | null;
   error: Error | null;
@@ -208,3 +213,5 @@ export type ApiRefreshTokenResponse =
 export type ApiSignOutResponse = { error: null | Error };
 
 export type ApiResetPasswordResponse = { error: null | Error };
+
+export type ApiChangePasswordResponse = { error: null | Error };
