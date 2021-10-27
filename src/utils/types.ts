@@ -198,3 +198,5 @@ export type ApiRefreshTokenResponse =
   | { session: null; error: Error };
 
 export type ApiSignOutResponse = { error: null | Error };
+
+export type ApiResetPasswordResponse = { error: null | Error };

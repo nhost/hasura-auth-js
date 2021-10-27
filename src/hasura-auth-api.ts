@@ -8,6 +8,7 @@ import {
   ApiSignInResponse,
   ApiSignOutResponse,
   ApiRefreshTokenResponse,
+  ApiResetPasswordResponse,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -112,6 +113,18 @@ export class HasuraAuthApi {
       return { session: res.data, error: null };
     } catch (error) {
       return { session: null, error };
+    }
+  }
+
+  public async resetPassword(params: {
+    email: string;
+  }): Promise<ApiResetPasswordResponse> {
+    try {
+      await this.httpClient.post('/user/password/reset', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
     }
   }
 

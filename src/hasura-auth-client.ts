@@ -311,6 +311,20 @@ export class HasuraAuthClient {
   }
 
   /**
+   * Use `resetPassword` to reset a user's email password.
+   *
+   * @example
+   * auth.resetPassword({email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async resetPassword(params: { email: string }): Promise<unknown> {
+    const { error } = await this.api.resetPassword(params);
+
+    return { error };
+  }
+
+  /**
    * Use `onTokenChanged` to add a custom function that will trigger whenever
    * the access and refresh token is changed.
    *
