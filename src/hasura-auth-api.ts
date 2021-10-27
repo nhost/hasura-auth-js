@@ -8,12 +8,15 @@ import {
   SignInPasswordlessEmailParmas,
   SignInPasswordlessSmsParmas,
   SignInPasswordlessSmsOtpParams,
+  ChangeEmailParams,
+  DeanonymizeParams,
   ApiSignInResponse,
   ApiSignOutResponse,
   ApiRefreshTokenResponse,
   ApiResetPasswordResponse,
   ApiChangePasswordResponse,
   ApiSendVerificationEmailResponse,
+  ApiChangeEmailResponse,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -157,8 +160,20 @@ export class HasuraAuthApi {
     }
   }
 
-  // sendVerificationEmail
-  // changeEmail
+  public async changeEmail(
+    params: ChangeEmailParams
+  ): Promise<ApiChangeEmailResponse> {
+    try {
+      await this.httpClient.post('/user/email/change', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  public async deanonymize(params: DeanonymizeParams);
+
   // deanonymize
 
   public async verifyEmail(params: {
