@@ -45,7 +45,7 @@ export type SignInEmailPasswordParams = {
   password: string;
 };
 
-export type SignInPasswordlessEmailParmas = {
+export type SignInPasswordlessEmailParams = {
   email: string;
   options?: {
     locale?: string;
@@ -56,7 +56,7 @@ export type SignInPasswordlessEmailParmas = {
   };
 };
 
-export type SignInPasswordlessSmsParmas = {
+export type SignInPasswordlessSmsParams = {
   phoneNumber: string;
   options?: {
     locale?: string;
@@ -85,8 +85,8 @@ export type SignInWithProviderOptions = {
 
 export type SignInParams =
   | SignInEmailPasswordParams
-  | SignInPasswordlessEmailParmas
-  | SignInPasswordlessSmsParmas
+  | SignInPasswordlessEmailParams
+  | SignInPasswordlessSmsParams
   | SignInPasswordlessSmsOtpParams
   | SignInWithProviderOptions;
 

@@ -20,6 +20,7 @@ import {
   ApiResetPasswordResponse,
   ApiSendVerificationEmailResponse,
   ApiChangeEmailResponse,
+  ApiChangePasswordResponse,
   ApiDeanonymizeResponse,
 } from './utils/types';
 
@@ -345,7 +346,7 @@ export class HasuraAuthClient {
    */
   public async changePassword(
     params: ChangePasswordParams
-  ): Promise<ApiResetPasswordResponse> {
+  ): Promise<ApiChangePasswordResponse> {
     const { error } = await this.api.changePassword(params);
 
     return { error };
@@ -363,7 +364,7 @@ export class HasuraAuthClient {
   public async sendVerificationEmail(
     params: SendVerificationEmailParams
   ): Promise<ApiSendVerificationEmailResponse> {
-    const { error } = await this.api.resetPassword(params);
+    const { error } = await this.api.sendVerificationEmail(params);
 
     return { error };
   }
@@ -385,7 +386,7 @@ export class HasuraAuthClient {
   }
 
   /**
-   * Use `deanonymize` to change a user's email
+   * Use `deanonymize` to deanonymize a user
    *
    * @example
    * auth.deanonymize({signInMethod: 'email-password', email})

@@ -5,8 +5,8 @@ import {
   SendVerificationEmailParams,
   SignUpEmailPasswordParams,
   SignInEmailPasswordParams,
-  SignInPasswordlessEmailParmas,
-  SignInPasswordlessSmsParmas,
+  SignInPasswordlessEmailParams,
+  SignInPasswordlessSmsParams,
   SignInPasswordlessSmsOtpParams,
   ChangeEmailParams,
   DeanonymizeParams,
@@ -59,7 +59,7 @@ export class HasuraAuthApi {
   }
 
   public async signInPasswordlessEmail(
-    params: SignInPasswordlessEmailParmas
+    params: SignInPasswordlessEmailParams
   ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post(
@@ -73,7 +73,7 @@ export class HasuraAuthApi {
   }
 
   public async signInPasswordlessSms(
-    params: SignInPasswordlessSmsParmas
+    params: SignInPasswordlessSmsParams
   ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post(
