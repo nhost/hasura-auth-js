@@ -11,8 +11,12 @@ import {
   Session,
   SignUpParams,
   SignInParams,
+  SendVerificationEmailParams,
+  ChangePasswordParams,
   SignUpResponse,
   ApiResetPasswordResponse,
+  ApiSendVerificationEmailResponse,
+  ResetPasswordParams,
 } from './utils/types';
 
 export class HasuraAuthClient {
@@ -319,9 +323,41 @@ export class HasuraAuthClient {
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public async resetPassword(params: {
-    email: string;
-  }): Promise<ApiResetPasswordResponse> {
+  public async resetPassword(
+    params: ResetPasswordParams
+  ): Promise<ApiResetPasswordResponse> {
+    const { error } = await this.api.resetPassword(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `changePassword` to change a user's password.
+   *
+   * @example
+   * auth.changePassword({oldPassword, newPassword})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async changePassword(
+    params: ChangePasswordParams
+  ): Promise<ApiResetPasswordResponse> {
+    const { error } = await this.api.changePassword(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `resetPassword` to reset a user's password.
+   *
+   * @example
+   * auth.resetPassword({email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async sendVerificationEmail(
+    params: SendVerificationEmailParams
+  ): Promise<ApiSendVerificationEmailResponse> {
     const { error } = await this.api.resetPassword(params);
 
     return { error };

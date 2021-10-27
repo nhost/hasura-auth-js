@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import {
   ResetPasswordParams,
   ChangePasswordParams,
+  SendVerificationEmailParams,
   SignUpEmailPasswordParams,
   SignInEmailPasswordParams,
   SignInPasswordlessEmailParmas,
@@ -12,6 +13,7 @@ import {
   ApiRefreshTokenResponse,
   ApiResetPasswordResponse,
   ApiChangePasswordResponse,
+  ApiSendVerificationEmailResponse,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -143,7 +145,18 @@ export class HasuraAuthApi {
     }
   }
 
-  // changePassword
+  public async sendVerificationEmail(
+    params: SendVerificationEmailParams
+  ): Promise<ApiSendVerificationEmailResponse> {
+    try {
+      await this.httpClient.post('/user/email/send-verification-email', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
   // sendVerificationEmail
   // changeEmail
   // deanonymize

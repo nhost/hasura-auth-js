@@ -102,6 +102,13 @@ export type ChangePasswordParams = {
   newPassword: string;
 };
 
+export type SendVerificationEmailParams = {
+  email: string;
+  options?: {
+    redirectTo?: string;
+  };
+};
+
 export type SignInReponse = {
   session: Session | null;
   error: Error | null;
@@ -215,3 +222,5 @@ export type ApiSignOutResponse = { error: null | Error };
 export type ApiResetPasswordResponse = { error: null | Error };
 
 export type ApiChangePasswordResponse = { error: null | Error };
+
+export type ApiSendVerificationEmailResponse = { error: null | Error };
