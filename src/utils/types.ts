@@ -39,6 +39,7 @@ export type SignUpResponse =
   | { session: null; error: Error };
 
 // Sign In
+
 export type SignInEmailPasswordParams = {
   email: string;
   password: string;
@@ -88,6 +89,13 @@ export type SignInParams =
   | SignInPasswordlessSmsParmas
   | SignInPasswordlessSmsOtpParams
   | SignInWithProviderOptions;
+
+export type ResetPasswordParams = {
+  email: string;
+  options?: {
+    redirectTo?: string;
+  };
+};
 
 export type SignInReponse = {
   session: Session | null;

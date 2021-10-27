@@ -12,6 +12,7 @@ import {
   SignUpParams,
   SignInParams,
   SignUpResponse,
+  ApiResetPasswordResponse,
 } from './utils/types';
 
 export class HasuraAuthClient {
@@ -311,14 +312,16 @@ export class HasuraAuthClient {
   }
 
   /**
-   * Use `resetPassword` to reset a user's email password.
+   * Use `resetPassword` to reset a user's password.
    *
    * @example
    * auth.resetPassword({email})
    *
    * @docs https://docs.nhost.io/TODO
    */
-  public async resetPassword(params: { email: string }): Promise<unknown> {
+  public async resetPassword(params: {
+    email: string;
+  }): Promise<ApiResetPasswordResponse> {
     const { error } = await this.api.resetPassword(params);
 
     return { error };

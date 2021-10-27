@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import {
+  ResetPasswordParams,
   SignUpEmailPasswordParams,
   SignInEmailPasswordParams,
   SignInPasswordlessEmailParmas,
@@ -116,9 +117,9 @@ export class HasuraAuthApi {
     }
   }
 
-  public async resetPassword(params: {
-    email: string;
-  }): Promise<ApiResetPasswordResponse> {
+  public async resetPassword(
+    params: ResetPasswordParams
+  ): Promise<ApiResetPasswordResponse> {
     try {
       await this.httpClient.post('/user/password/reset', params);
 
@@ -128,7 +129,6 @@ export class HasuraAuthApi {
     }
   }
 
-  // resetPassword
   // changePassword
   // sendVerificationEmail
   // changeEmail
