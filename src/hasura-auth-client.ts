@@ -140,7 +140,7 @@ export class HasuraAuthClient {
    * @docs https://docs.nhost.io/TODO
    */
   public async signUp(params: SignUpParams): Promise<SignUpResponse> {
-    const { email, password, options } = params;
+    const { email, password } = params;
 
     // email and password
     if (email && password) {
