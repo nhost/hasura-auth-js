@@ -11,7 +11,17 @@ import {
   Session,
   SignUpParams,
   SignInParams,
+  ResetPasswordParams,
+  SendVerificationEmailParams,
+  ChangePasswordParams,
+  ChangeEmailParams,
+  DeanonymizeParams,
   SignUpResponse,
+  ApiResetPasswordResponse,
+  ApiSendVerificationEmailResponse,
+  ApiChangeEmailResponse,
+  ApiChangePasswordResponse,
+  ApiDeanonymizeResponse,
 } from './utils/types';
 
 export class HasuraAuthClient {
@@ -308,6 +318,87 @@ export class HasuraAuthClient {
     const { data, error } = await this.api.verifyEmail(params);
 
     return { data, error };
+  }
+
+  /**
+   * Use `resetPassword` to reset a user's password.
+   *
+   * @example
+   * auth.resetPassword({email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async resetPassword(
+    params: ResetPasswordParams
+  ): Promise<ApiResetPasswordResponse> {
+    const { error } = await this.api.resetPassword(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `changePassword` to change a user's password.
+   *
+   * @example
+   * auth.changePassword({oldPassword, newPassword})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async changePassword(
+    params: ChangePasswordParams
+  ): Promise<ApiChangePasswordResponse> {
+    const { error } = await this.api.changePassword(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `sendVerificationEmail` to send a verification email
+   * to the specified email.
+   *
+   * @example
+   * auth.sendVerificationEmail({email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async sendVerificationEmail(
+    params: SendVerificationEmailParams
+  ): Promise<ApiSendVerificationEmailResponse> {
+    const { error } = await this.api.sendVerificationEmail(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `changeEmail` to change a user's email
+   *
+   * @example
+   * auth.changeEmail({newEmail})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async changeEmail(
+    params: ChangeEmailParams
+  ): Promise<ApiChangeEmailResponse> {
+    const { error } = await this.api.changeEmail(params);
+
+    return { error };
+  }
+
+  /**
+   * Use `deanonymize` to deanonymize a user
+   *
+   * @example
+   * auth.deanonymize({signInMethod: 'email-password', email})
+   *
+   * @docs https://docs.nhost.io/TODO
+   */
+  public async deanonymize(
+    params: DeanonymizeParams
+  ): Promise<ApiDeanonymizeResponse> {
+    const { error } = await this.api.deanonymize(params);
+
+    return { error };
   }
 
   /**
