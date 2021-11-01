@@ -100,7 +100,7 @@ export class HasuraAuthClient {
 
     // try to auto login using hashtag query parameters
     // ex if the user came from a magic link
-    if (autoLogin && isBrowser()) {
+    if (autoLogin && isBrowser() && window.location) {
       // try {
       const urlParams = queryString.parse(
         window.location.toString().split('#')[1]
