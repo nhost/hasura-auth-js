@@ -170,7 +170,11 @@ export class HasuraAuthApi {
     params: ChangeEmailParams
   ): Promise<ApiChangeEmailResponse> {
     try {
-      await this.httpClient.post('/user/email/change', params);
+      await this.httpClient.post('/user/email/change', params, {
+        headers: {
+          ...this.generateAuthHeaders(),
+        },
+      });
 
       return { error: null };
     } catch (error) {
