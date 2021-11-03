@@ -96,9 +96,57 @@ test('reset email verification', async () => {
     password,
   });
 
+  // sign in shoudl fail
+  const signInA = await auth.signIn({
+    email,
+    password,
+  });
+
+  expect(signInA.error).toBeTruthy();
+  expect(signInA.session).toBeNull();
+
   await mailhog.deleteAll();
 
-  auth.sendVerificationEmail({ email });
+  await auth.sendVerificationEmail({ email });
 
-  // expect(await (await mailhog.messages())?.count).toBe(1);
+  // make sure onle a single message exists
+  const messages = await mailhog.messages();
+
+  if (!messages) {
+    throw new Error('no messages');
+  }
+
+  expect(messages.count).toBe(1);
+
+  // get email that was sent
+  const verifyEmailEmail = await mailhog.latestTo(email);
+
+  if (!verifyEmailEmail?.html) {
+    throw new Error('email does not exists');
+  }
+
+  // test email link
+  // get verify email link
+  const verifyEmailLink = htmlUrls({ html: verifyEmailEmail.html }).find(
+    (href: { value: string; url: string; uri: string }) => {
+      return href.url.includes('verifyEmail');
+    }
+  );
+
+  // verify email
+  await axios.get(verifyEmailLink.url, {
+    maxRedirects: 0,
+    validateStatus: (status) => {
+      return status === 302;
+    },
+  });
+
+  // sign in should work
+  const signInB = await auth.signIn({
+    email,
+    password,
+  });
+
+  expect(signInB.error).toBeNull();
+  expect(signInB.session).toBeTruthy();
 });
