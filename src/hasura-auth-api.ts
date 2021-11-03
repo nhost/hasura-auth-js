@@ -21,8 +21,9 @@ import {
 } from './utils/types';
 
 export class HasuraAuthApi {
-  private httpClient: AxiosInstance;
   private url: string;
+  private httpClient: AxiosInstance;
+  private accessToken: string | undefined;
 
   constructor({ url = '' }) {
     this.url = url;
@@ -141,7 +142,11 @@ export class HasuraAuthApi {
     params: ChangePasswordParams
   ): Promise<ApiChangePasswordResponse> {
     try {
-      await this.httpClient.post('/user/password', params);
+      await this.httpClient.post('/user/password', params, {
+        headers: {
+          ...this.generateAuthHeaders(),
+        },
+      });
 
       return { error: null };
     } catch (error) {
@@ -198,5 +203,19 @@ export class HasuraAuthApi {
     } catch (error) {
       return { data: null, error };
     }
+  }
+
+  public setAccessToken(accessToken: string | undefined) {
+    this.accessToken = accessToken;
+  }
+
+  private generateAuthHeaders() {
+    if (!this.accessToken) {
+      return null;
+    }
+
+    return {
+      Authorization: `Bearer ${this.accessToken}`,
+    };
   }
 }

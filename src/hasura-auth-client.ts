@@ -804,6 +804,12 @@ export class HasuraAuthClient {
     event: AuthChangeEvent;
     session: Session | null;
   }): void {
+    if (event === 'SIGNED_IN' && session) {
+      this.api.setAccessToken(session.accessToken);
+    } else {
+      this.api.setAccessToken(undefined);
+    }
+
     for (const authChangedFunction of this.onAuthChangedFunctions) {
       authChangedFunction(event, session);
     }
