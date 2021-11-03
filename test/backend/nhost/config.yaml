@@ -1,5 +1,7 @@
 metadata_directory: metadata
 services:
+  mailhog:
+    port: 8025
   hasura:
     environment:
       hasura_graphql_enable_remote_schema_permissions: false

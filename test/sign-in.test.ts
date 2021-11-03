@@ -13,7 +13,7 @@ const auth = new HasuraAuthClient({
 
 const mailhog = createMailhogClient({
   host: 'localhost',
-  port: 8826,
+  port: 8025,
 });
 
 test('sign in user with email and password', async () => {
@@ -88,8 +88,6 @@ test('sign in user with passwordless email (magic link)', async () => {
 
   // get email that was sent
   const message = await mailhog.latestTo(email);
-
-  console.log({ message });
 
   if (!message?.html) {
     throw new Error('email does not exists');
