@@ -1,13 +1,23 @@
 import axios, { AxiosInstance } from 'axios';
 import {
+  ResetPasswordParams,
+  ChangePasswordParams,
+  SendVerificationEmailParams,
   SignUpEmailPasswordParams,
   SignInEmailPasswordParams,
-  SignInPasswordlessEmailParmas,
-  SignInPasswordlessSmsParmas,
+  SignInPasswordlessEmailParams,
+  SignInPasswordlessSmsParams,
   SignInPasswordlessSmsOtpParams,
+  ChangeEmailParams,
+  DeanonymizeParams,
   ApiSignInResponse,
   ApiSignOutResponse,
   ApiRefreshTokenResponse,
+  ApiResetPasswordResponse,
+  ApiChangePasswordResponse,
+  ApiSendVerificationEmailResponse,
+  ApiChangeEmailResponse,
+  ApiDeanonymizeResponse,
 } from './utils/types';
 
 export class HasuraAuthApi {
@@ -49,7 +59,7 @@ export class HasuraAuthApi {
   }
 
   public async signInPasswordlessEmail(
-    params: SignInPasswordlessEmailParmas
+    params: SignInPasswordlessEmailParams
   ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post(
@@ -63,7 +73,7 @@ export class HasuraAuthApi {
   }
 
   public async signInPasswordlessSms(
-    params: SignInPasswordlessSmsParmas
+    params: SignInPasswordlessSmsParams
   ): Promise<ApiSignInResponse> {
     try {
       const res = await this.httpClient.post(
@@ -115,10 +125,66 @@ export class HasuraAuthApi {
     }
   }
 
-  // resetPassword
-  // changePassword
-  // sendVerificationEmail
-  // changeEmail
+  public async resetPassword(
+    params: ResetPasswordParams
+  ): Promise<ApiResetPasswordResponse> {
+    try {
+      await this.httpClient.post('/user/password/reset', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  public async changePassword(
+    params: ChangePasswordParams
+  ): Promise<ApiChangePasswordResponse> {
+    try {
+      await this.httpClient.post('/user/password', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  public async sendVerificationEmail(
+    params: SendVerificationEmailParams
+  ): Promise<ApiSendVerificationEmailResponse> {
+    try {
+      await this.httpClient.post('/user/email/send-verification-email', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  public async changeEmail(
+    params: ChangeEmailParams
+  ): Promise<ApiChangeEmailResponse> {
+    try {
+      await this.httpClient.post('/user/email/change', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  public async deanonymize(
+    params: DeanonymizeParams
+  ): Promise<ApiDeanonymizeResponse> {
+    try {
+      await this.httpClient.post('/user/deanonymize', params);
+
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  }
+
   // deanonymize
 
   public async verifyEmail(params: {

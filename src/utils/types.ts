@@ -39,12 +39,13 @@ export type SignUpResponse =
   | { session: null; error: Error };
 
 // Sign In
+
 export type SignInEmailPasswordParams = {
   email: string;
   password: string;
 };
 
-export type SignInPasswordlessEmailParmas = {
+export type SignInPasswordlessEmailParams = {
   email: string;
   options?: {
     locale?: string;
@@ -55,7 +56,7 @@ export type SignInPasswordlessEmailParmas = {
   };
 };
 
-export type SignInPasswordlessSmsParmas = {
+export type SignInPasswordlessSmsParams = {
   phoneNumber: string;
   options?: {
     locale?: string;
@@ -84,10 +85,45 @@ export type SignInWithProviderOptions = {
 
 export type SignInParams =
   | SignInEmailPasswordParams
-  | SignInPasswordlessEmailParmas
-  | SignInPasswordlessSmsParmas
+  | SignInPasswordlessEmailParams
+  | SignInPasswordlessSmsParams
   | SignInPasswordlessSmsOtpParams
   | SignInWithProviderOptions;
+
+export type ResetPasswordParams = {
+  email: string;
+  options?: {
+    redirectTo?: string;
+  };
+};
+
+export type ChangePasswordParams = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+export type SendVerificationEmailParams = {
+  email: string;
+  options?: {
+    redirectTo?: string;
+  };
+};
+
+export type ChangeEmailParams = {
+  newEmail: string;
+  options?: {
+    redirectTo?: string;
+  };
+};
+
+export type DeanonymizeParams = {
+  signInMethod: 'email-password' | 'passwordless';
+  email: string;
+  password?: string;
+  connection?: 'email' | 'sms';
+  defaultRole?: string;
+  allowedRoles?: string[];
+};
 
 export type SignInReponse = {
   session: Session | null;
@@ -198,3 +234,13 @@ export type ApiRefreshTokenResponse =
   | { session: null; error: Error };
 
 export type ApiSignOutResponse = { error: null | Error };
+
+export type ApiResetPasswordResponse = { error: null | Error };
+
+export type ApiChangePasswordResponse = { error: null | Error };
+
+export type ApiSendVerificationEmailResponse = { error: null | Error };
+
+export type ApiChangeEmailResponse = { error: null | Error };
+
+export type ApiDeanonymizeResponse = { error: null | Error };
