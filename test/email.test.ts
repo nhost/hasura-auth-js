@@ -85,3 +85,20 @@ test('change email', async () => {
     },
   });
 });
+
+test('reset email verification', async () => {
+  const email = faker.internet.email().toLocaleLowerCase();
+  const password = faker.internet.password(8);
+
+  // sign up
+  await auth.signUp({
+    email,
+    password,
+  });
+
+  await mailhog.deleteAll();
+
+  auth.sendVerificationEmail({ email });
+
+  // expect(await (await mailhog.messages())?.count).toBe(1);
+});
