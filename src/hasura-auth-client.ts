@@ -168,7 +168,7 @@ export class HasuraAuthClient {
       const { session } = data;
 
       if (session) {
-        this._setSession(session);
+        await this._setSession(session);
       }
 
       return { session, error: null };
@@ -207,9 +207,8 @@ export class HasuraAuthClient {
 
       if (isBrowser()) {
         window.location.href = providerUrl;
-      } else {
-        return { providerUrl, provider, session: null, mfa: null, error: null };
       }
+      return { providerUrl, provider, session: null, mfa: null, error: null };
     }
 
     // email password
@@ -227,7 +226,7 @@ export class HasuraAuthClient {
       const { session, mfa } = data;
 
       if (session) {
-        this._setSession(session);
+        await this._setSession(session);
       }
 
       return { session, mfa, error: null };
@@ -764,8 +763,8 @@ export class HasuraAuthClient {
 
     if (!refreshToken) {
       // place at end of call-stack to let frontend get `null` first (to match SSR)
-      setTimeout(() => {
-        this._clearSession();
+      setTimeout(async () => {
+        await this._clearSession();
       }, 0);
       return;
     }
@@ -778,14 +777,14 @@ export class HasuraAuthClient {
 
       if (error) {
         if (error.message === 'Request failed with status code 401') {
-          this._clearSession();
+          await this._clearSession();
           return;
         }
       }
 
       if (!session) throw new Error('Invalid session data');
 
-      this._setSession(session);
+      await this._setSession(session);
       this.tokenChanged();
     } catch (error) {
       // throw new Error(error);
@@ -805,6 +804,12 @@ export class HasuraAuthClient {
     event: AuthChangeEvent;
     session: Session | null;
   }): void {
+    if (event === 'SIGNED_IN' && session) {
+      this.api.setAccessToken(session.accessToken);
+    } else {
+      this.api.setAccessToken(undefined);
+    }
+
     for (const authChangedFunction of this.onAuthChangedFunctions) {
       authChangedFunction(event, session);
     }
@@ -847,7 +852,7 @@ export class HasuraAuthClient {
 
       this.refreshInterval = setInterval(async () => {
         const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
-        this._refreshTokens(refreshToken);
+        await this._refreshTokens(refreshToken);
       }, refreshIntervalTime * 1000);
 
       // refresh token after computer has been sleeping
@@ -859,11 +864,10 @@ export class HasuraAuthClient {
           this.sampleRate * 2
         ) {
           const refreshToken = await this._getItem(NHOST_REFRESH_TOKEN);
-          this._refreshTokens(refreshToken);
+          await this._refreshTokens(refreshToken);
         }
         this.refreshIntervalSleepCheckLastSample = Date.now();
       }, this.sampleRate);
-
       this.authStateChanged({ event: 'SIGNED_IN', session: this.session });
     }
 
