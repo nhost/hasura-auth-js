@@ -22,7 +22,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "run-s build:esm build:cjs",
+    "build": "run-p build:esm build:cjs",
     "build:esm": "tsc",
     "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "test:backend:start": "cd test/backend; nhost dev -d --no-browser",
