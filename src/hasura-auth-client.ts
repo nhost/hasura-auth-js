@@ -339,7 +339,7 @@ export class HasuraAuthClient {
    * Use `changePassword` to change a user's password.
    *
    * @example
-   * auth.changePassword({oldPassword, newPassword})
+   * auth.changePassword({ newPassword })
    *
    * @docs https://docs.nhost.io/TODO
    */
