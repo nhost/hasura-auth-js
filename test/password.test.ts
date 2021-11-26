@@ -20,7 +20,6 @@ test('change existing password', async () => {
 
   const newPassword = `${password}-new`;
   const changePasswordResponse = await auth.changePassword({
-    oldPassword: password,
     newPassword,
   });
 
