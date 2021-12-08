@@ -107,7 +107,7 @@ auth:
         from: ''
         messaging_service_id: ''
   smtp:
-    host: backend_mailhog
+    host: nhost_mailhog
     method: ''
     pass: password
     port: 1807
