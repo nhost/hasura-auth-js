@@ -5,6 +5,8 @@ services:
   hasura:
     environment:
       hasura_graphql_enable_remote_schema_permissions: false
+  auth:
+    version: sha-c328aa7
 auth:
   access_control:
     email:
@@ -105,7 +107,7 @@ auth:
         from: ''
         messaging_service_id: ''
   smtp:
-    host: backend_mailhog
+    host: nhost_mailhog
     method: ''
     pass: password
     port: 1807
