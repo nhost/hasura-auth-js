@@ -23,6 +23,7 @@ import {
   ApiChangePasswordResponse,
   ApiDeanonymizeResponse,
 } from './utils/types';
+import { ApiError } from './utils/types';
 
 export class HasuraAuthClient {
   private api: HasuraAuthApi;
@@ -162,7 +163,10 @@ export class HasuraAuthClient {
       }
 
       if (!data) {
-        return { session: null, error: new Error('Incorrect data') };
+        return {
+          session: null,
+          error: { message: 'An error occurred on sign up.', status: 500 },
+        };
       }
 
       const { session } = data;
@@ -174,7 +178,10 @@ export class HasuraAuthClient {
       return { session, error: null };
     }
 
-    return { session: null, error: new Error('incorrect parameters') };
+    return {
+      session: null,
+      error: { message: 'Incorrect parameters', status: 500 },
+    };
   }
 
   /**
@@ -197,7 +204,7 @@ export class HasuraAuthClient {
     mfa: null | {
       ticket: string;
     };
-    error: Error | null;
+    error: null | ApiError;
     providerUrl?: string;
     provider?: string;
   }> {
@@ -220,7 +227,11 @@ export class HasuraAuthClient {
       }
 
       if (!data) {
-        return { session: null, mfa: null, error: new Error('Incorrect data') };
+        return {
+          session: null,
+          mfa: null,
+          error: { message: 'Incorrect Data', status: 500 },
+        };
       }
 
       const { session, mfa } = data;
@@ -265,7 +276,7 @@ export class HasuraAuthClient {
         return {
           session: null,
           mfa: null,
-          error: new Error('Incorrect data'),
+          error: { message: 'Incorrect data', status: 500 },
         };
       }
       const { session, mfa } = data;
@@ -278,7 +289,7 @@ export class HasuraAuthClient {
     return {
       session: null,
       mfa: null,
-      error: new Error('incorrect parameters'),
+      error: { message: 'Incorrect parameters', status: 500 },
     };
   }
 

@@ -19,8 +19,12 @@ export type User = {
   };
 };
 
-// Sign Up
+export type ApiError = {
+  message: string;
+  status: number;
+};
 
+// Sign Up
 export type SignUpEmailPasswordParams = {
   email: string;
   password: string;
@@ -36,10 +40,9 @@ export type SignUpParams = SignUpEmailPasswordParams;
 
 export type SignUpResponse =
   | { session: Session | null; error: null }
-  | { session: null; error: Error };
+  | { session: null; error: ApiError };
 
 // Sign In
-
 export type SignInEmailPasswordParams = {
   email: string;
   password: string;
@@ -126,7 +129,7 @@ export type DeanonymizeParams = {
 
 export type SignInReponse = {
   session: Session | null;
-  error: Error | null;
+  error: ApiError | null;
   mfa?: {
     enabled: boolean;
     ticket: string;
@@ -216,7 +219,7 @@ export type Mfa = {
 
 export type ApiSignUpEmailPasswordResponse =
   | { session: Session; error: null }
-  | { session: null; error: Error };
+  | { session: null; error: ApiError };
 
 export type ApiSignInResponse =
   | {
@@ -226,20 +229,20 @@ export type ApiSignInResponse =
       };
       error: null;
     }
-  | { data: null; error: Error };
+  | { data: null; error: ApiError };
 
 export type ApiRefreshTokenResponse =
   | { session: Session; error: null }
-  | { session: null; error: Error };
+  | { session: null; error: ApiError };
 
-export type ApiSignOutResponse = { error: null | Error };
+export type ApiSignOutResponse = { error: null | ApiError };
 
-export type ApiResetPasswordResponse = { error: null | Error };
+export type ApiResetPasswordResponse = { error: null | ApiError };
 
-export type ApiChangePasswordResponse = { error: null | Error };
+export type ApiChangePasswordResponse = { error: null | ApiError };
 
-export type ApiSendVerificationEmailResponse = { error: null | Error };
+export type ApiSendVerificationEmailResponse = { error: null | ApiError };
 
-export type ApiChangeEmailResponse = { error: null | Error };
+export type ApiChangeEmailResponse = { error: null | ApiError };
 
-export type ApiDeanonymizeResponse = { error: null | Error };
+export type ApiDeanonymizeResponse = { error: null | ApiError };

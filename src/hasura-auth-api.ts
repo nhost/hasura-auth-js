@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import {
   ResetPasswordParams,
   ChangePasswordParams,
@@ -32,6 +32,20 @@ export class HasuraAuthApi {
       baseURL: this.url,
       timeout: 10000,
     });
+
+    // convert axios error to custom ApiError
+    this.httpClient.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        return Promise.reject({
+          message:
+            error.response?.data.message ||
+            error.message ||
+            JSON.stringify(error),
+          status: error.response?.status || 500,
+        });
+      }
+    );
   }
 
   /**
