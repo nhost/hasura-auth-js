@@ -27,7 +27,7 @@ export type SignUpEmailPasswordParams = {
   options?: {
     locale?: string;
     defaultRole?: string;
-    roles?: string[];
+    allowedRoles?: string[];
     displayName?: string;
   };
 };
