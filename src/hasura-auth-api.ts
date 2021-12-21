@@ -40,6 +40,7 @@ export class HasuraAuthApi {
         return Promise.reject({
           message:
             error.response?.data.message ||
+            error.response?.data ||
             error.message ||
             JSON.stringify(error),
           status: error.response?.status || 500,
