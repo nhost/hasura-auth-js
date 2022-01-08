@@ -787,7 +787,7 @@ export class HasuraAuthClient {
       const { session, error } = await this.api.refreshToken({ refreshToken });
 
       if (error) {
-        if (error.message === 'Request failed with status code 401') {
+        if (error.code === 401) {
           await this._clearSession();
           return;
         }
