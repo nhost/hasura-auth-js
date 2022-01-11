@@ -14,9 +14,7 @@ export type User = {
   email?: string;
   isAnonymous: boolean;
   defaultRole: string;
-  roles: {
-    [key: string]: string;
-  };
+  roles: string [];
 };
 
 export type ApiError = {
