@@ -16,7 +16,8 @@
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
   "files": [
-    "/dist"
+    "dist",
+    "src"
   ],
   "publishConfig": {
     "access": "public"
