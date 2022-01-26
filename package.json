@@ -1,17 +1,24 @@
 {
   "name": "@nhost/hasura-auth-js",
   "version": "0.0.0-development",
-  "description": "Hasura Auth JS",
+  "description": "Hasura-auth client",
+  "license": "MIT",
   "keywords": [
     "nhost",
     "hasura",
     "auth",
-    "authentication"
+    "authentication",
+    "graphql",
+    "postgresql",
+    "realtime"
   ],
   "author": "Nhost",
-  "homepage": "https://github.com/nhost/hasura-auth-js",
+  "homepage": "https://nhost.io",
   "bugs": "https://github.com/nhost/hasura-auth-js/issues",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhost/hasura-auth-js.git"
+  },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
@@ -51,9 +58,5 @@
     "typedoc": "^0.22.6",
     "typescript": "^4.4.2",
     "semantic-release": "^18.0.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nhost/hasura-auth-js.git"
   }
 }
