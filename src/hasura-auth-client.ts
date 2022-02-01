@@ -498,7 +498,7 @@ export class HasuraAuthClient {
    *
    * @example
    *
-   * const isAuthenticated  = awiat auth.isAuthenticatedAsync();
+   * const isAuthenticated  = await auth.isAuthenticatedAsync();
    *
    * if (isAuthenticated) {
    *   console.log('User is authenticated');
