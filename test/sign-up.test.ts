@@ -37,6 +37,24 @@ test('sign up with options', async () => {
   expect(session).toBeNull();
 });
 
+test('sign up with metadata', async () => {
+  const email = faker.internet.email().toLocaleLowerCase();
+  const password = faker.internet.password(8);
+
+  const { session, error } = await auth.signUp({
+    email,
+    password,
+    options: {
+      metadata: {
+        birthDate: '1990-01-01',
+      },
+    },
+  });
+
+  expect(error).toBeNull();
+  expect(session).toBeNull();
+});
+
 // test('sign up should fail with email already in use', async () => {});
 test('sign up should fail with no password', async () => {
   const email = faker.internet.email().toLocaleLowerCase();

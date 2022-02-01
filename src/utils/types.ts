@@ -34,6 +34,7 @@ export type SignUpEmailPasswordParams = {
     defaultRole?: string;
     displayName?: string;
     redirectTo?: string;
+    metadata?: { [key: string]: any };
   };
 };
 
@@ -57,6 +58,7 @@ export type SignInPasswordlessEmailParams = {
     defaultRole?: string;
     displayName?: string;
     redirectTo?: string;
+    metadata?: { [key: string]: any };
   };
 };
 
@@ -68,6 +70,7 @@ export type SignInPasswordlessSmsParams = {
     defaultRole?: string;
     displayName?: string;
     redirectTo?: string;
+    metadata?: { [key: string]: any };
   };
 };
 
@@ -84,6 +87,7 @@ export type SignInWithProviderOptions = {
     defaultRole?: string;
     displayName?: string;
     redirectTo?: string;
+    metadata?: { [key: string]: any };
   };
 };
 
