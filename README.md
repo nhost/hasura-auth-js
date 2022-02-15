@@ -1,3 +1,9 @@
+# Disclaimer
+
+This package is now part of our [monorepo](https://github.com/nhost/nhost)
+
+------
+
 # Hasura Auth JS SDK
 
 Hasura Auth JS SDK to handle **Auth** with [Hasura](https://hasura.io/).
